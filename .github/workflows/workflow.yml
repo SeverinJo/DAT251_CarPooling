@@ -1,15 +1,20 @@
 name: Backend CI
+
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - "main"
+      - "develop"
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - "develop"
+      - "main"
 
 jobs:
   build-backend:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -46,8 +51,35 @@ jobs:
           path: backend/**/build/libs/*.jar
 
       - name: Deploy JaCoCo report to GitHub Pages
-        if: success()
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: backend/build/reports/jacoco/test/html
+
+  release:
+    needs: build-backend
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # so tag action sees all tags
+
+      - name: Download built JAR
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-jar
+          path: dist
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag.outputs.new_tag }}
+          name: Release ${{ steps.tag.outputs.new_tag }}
+          generateReleaseNotes: true
+          artifacts: "dist/**/*.jar"
