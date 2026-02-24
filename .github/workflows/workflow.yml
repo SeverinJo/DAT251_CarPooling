@@ -9,7 +9,7 @@ jobs:
   build-backend:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -45,9 +45,9 @@ jobs:
           name: backend-jar
           path: backend/**/build/libs/*.jar
 
-      - name: Upload JaCoCo HTML report
-        if: always()
-        uses: actions/upload-artifact@v4
+      - name: Deploy JaCoCo report to GitHub Pages
+        if: success()
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          name: backend-coverage-html
-          path: backend/**/build/reports/jacoco/test/html
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: backend/build/reports/jacoco/test/html
