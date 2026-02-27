@@ -8,7 +8,7 @@ Include #major, #minor or #patch in pull-request title to mark a release This wi
 - #minor	1.2.3 → 1.3.0
 - #patch	1.2.3 → 1.2.4
 
-
+# Other stuff
 JaCoCo: https://severinjo.github.io/DAT251_CarPooling/
 
 ScrumBan: https://trello.com/b/YUoSDhwR/scrumban
