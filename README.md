@@ -8,6 +8,8 @@ Include #major, #minor or #patch in pull-request title to mark a release. This w
 - #minor	1.2.3 → 1.3.0
 - #patch	1.2.3 → 1.2.4
 
+![Like this](docs/img.png)
+
 # Other stuff
 JaCoCo: https://severinjo.github.io/DAT251_CarPooling/
 
