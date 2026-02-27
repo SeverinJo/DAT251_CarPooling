@@ -1,0 +1,21 @@
+{
+  "stories": [
+    {"id": "", "title": "", "status": ""},
+    {"id": "US-007", "title": "Password reset for users", "status": "planned"},
+    {"id": "US-076", "title": "Admin monitoring and management", "status": "planned"},
+    {"id": "US-098", "title": "Receive and list trips", "status": "planned"},
+    {"id": "US-110", "title": "Systematic rewards for usage", "status": "planned"},
+    {"id": "US-183", "title": "User creation", "status": "planned"},
+    {"id": "US-257", "title": "Apply for trip system", "status": "planned"},
+    {"id": "US-509", "title": "Accept or deny passenger", "status": "planned"},
+    {"id": "US-514", "title": "Driver info and feedback", "status": "planned"},
+    {"id": "US-529", "title": "BankID verification", "status": "planned"},
+    {"id": "US-568", "title": "Personal statistics display", "status": "planned"},
+    {"id": "US-601", "title": "Social group formation", "status": "planned"},
+    {"id": "US-706", "title": "Trip planner", "status": "planned"},
+    {"id": "US-826", "title": "Include public transport in app", "status": "planned"},
+    {"id": "US-858", "title": "Map with local trip information", "status": "planned"},
+    {"id": "US-923", "title": "Safe login system", "status": "planned"},
+    {"id": "US-991", "title": "Trip cancellation notification", "status": "planned"}
+  ]
+}
