@@ -9,7 +9,7 @@ public class CarPoolingApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(CarPoolingApplication.class, args);
-		System.out.print("Ole er gay!");
+		System.out.print("Ole var her!");
 	}
 
 }
