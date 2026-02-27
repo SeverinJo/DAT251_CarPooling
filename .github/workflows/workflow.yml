@@ -75,6 +75,13 @@ jobs:
           name: backend-jar
           path: dist
 
+      - name: Auto-bump version tag
+        id: tag
+        uses: hennejg/github-tag-action@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tag_prefix: "v"
+
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
