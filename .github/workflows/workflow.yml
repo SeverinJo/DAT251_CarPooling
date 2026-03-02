@@ -33,7 +33,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build & test (backend)
-        run: ./gradlew :backend:build
+        run: ./gradlew :backend:build :backend:jacocoTestReport
 
       - name: Upload test reports
         if: always()
@@ -51,13 +51,24 @@ jobs:
           name: backend-jar
           path: backend/**/build/libs/*.jar
 
-      - name: Deploy JaCoCo report to GitHub Pages
+      - name: Deploy JaCoCo report to GitHub Pages (DEV)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/development'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: backend/build/reports/jacoco/test/html
+          destination_dir: jacoco/development
+          keep_files: true
+
+      - name: Deploy JaCoCo report to GitHub Pages (MAIN)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: backend/build/reports/jacoco/test/html
-#
+          destination_dir: jacoco/main
+          keep_files: true
+  #
   release:
     needs: build-backend
     runs-on: ubuntu-latest
