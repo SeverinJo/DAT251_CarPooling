@@ -10,8 +10,8 @@ Push-notification or an SMS-notification upon cancellation.
 - [ ]
 
 ## BFTB Score
-Bang:
-Buck:
-TOTAL:
+Bang: 5
+Buck: 3
+TOTAL: 1.67
 
 ## misc

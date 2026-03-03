@@ -10,8 +10,8 @@ Have a safe and working login system.
 - [ ]
 
 ## BFTB Score
-Bang:
-Buck:
-TOTAL:
+Bang: 13
+Buck: 5
+TOTAL: 2.60
 
 ## misc

@@ -10,8 +10,8 @@ Active monitoring of user activity, with an available option to administer lifet
 - [ ]
 
 ## BFTB Score
-Bang:
-Buck:
-TOTAL:
+Bang: 5
+Buck: 5
+TOTAL: 1.00
 
 ## misc

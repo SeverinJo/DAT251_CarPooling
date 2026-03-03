@@ -10,8 +10,8 @@ Systematic and accumulating rewards for using the application.
 - [ ]
 
 ## BFTB Score
-Bang:
-Buck:
-TOTAL:
+Bang: 3
+Buck: 5
+TOTAL: 0.60
 
 ## misc

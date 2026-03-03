@@ -13,8 +13,8 @@ posting as a driver.
  - [ Realistic ] Just use a mock page as "BankID" authorization and redirect to that one instead.
 
 ## BFTB Score
-Bang:
-Buck:
-TOTAL:
+Bang: 8
+Buck: 13
+TOTAL: 0.62
 
 ## misc

@@ -3,7 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "story:list": "node scripts/storymanagement.mjs list",
+    "story:get": "node scripts/storymanagement.mjs get",
+    "story:planned": "node scripts/storymanagement.mjs planned",
+    "story:implemented": "node scripts/storymanagement.mjs implemented",
+    "story:set": "node scripts/storymanagement.mjs set",
+    "story:getComp": "node scripts/storymanagement.mjs getComp"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

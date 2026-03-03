@@ -10,8 +10,8 @@ Save user-specific data over amount of trips, estimated CO2 emissions negated, e
 - [ ]
 
 ## BFTB Score
-Bang:
-Buck:
-TOTAL:
+Bang: 3
+Buck: 3
+TOTAL: 1.00
 
 ## misc

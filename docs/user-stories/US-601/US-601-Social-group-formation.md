@@ -10,8 +10,8 @@ Enable group formation, based on social interconnections.
 - [ ]
 
 ## BFTB Score
-Bang:
-Buck:
-TOTAL:
+Bang: 3
+Buck: 3
+TOTAL: 1.00
 
 ## misc

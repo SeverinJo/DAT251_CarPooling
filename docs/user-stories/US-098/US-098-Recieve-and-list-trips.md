@@ -10,8 +10,8 @@ Receive trip creations, and list them in the app.
 - [ ]
 
 ## BFTB Score
-Bang:
-Buck:
-TOTAL:
+Bang: 13
+Buck: 8
+TOTAL: 1.62
 
 ## misc
