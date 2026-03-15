@@ -43,14 +43,20 @@ public class TestcontainersConfiguration {
         Thread.sleep(2000);
 
         System.setProperty("spring.datasource.url", container.getJdbcUrl());
+        System.setProperty("spring.datasource.user", container.getUsername());
+        System.setProperty("spring.datasource.password", container.getPassword());
+
         System.setProperty("spring.flyway.url", container.getJdbcUrl());
         System.setProperty("spring.flyway.user", container.getUsername());
         System.setProperty("spring.flyway.password", container.getPassword());
+        System.setProperty("spring.flyway.locations", "classpath:db/migration");
 
         return container;
     }
 
+
     @Bean
+    @SuppressWarnings("SqlSourceToSinkFlow")
     public ApplicationRunner loadTestData(JdbcTemplate jdbcTemplate) {
         return args -> {
             Path sqlPath = new ClassPathResource("db/data/testdata_at_startup.sql").getFile().toPath();
