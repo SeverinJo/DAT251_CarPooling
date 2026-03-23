@@ -11,7 +11,7 @@ export interface Vehicle {
     brand: string;
     model: string;
     year: number;
-    licencePlate: string;
+    licensePlate: string;
     availableSeats: number;
 }
 
@@ -21,9 +21,10 @@ export interface TripSegment {
     to: string;
     departure: string;
     arrival: string;
+    provider?: string;
     price: number;
-    driver?: string;
-    vehicle: Vehicle;
+    driver?: User;
+    vehicle?: Vehicle;
 }
 
 export interface Trip {
