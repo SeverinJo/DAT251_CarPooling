@@ -6,6 +6,7 @@ HELP.md
 .gradle/
 **/build/
 !**/gradle/wrapper/gradle-wrapper.jar
+gradle.properties
 # --- IntelliJ / IDE ---
 .idea/
 *.iws
