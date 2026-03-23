@@ -10,6 +10,7 @@ Include #major, #minor or #patch in pull-request title to mark a release. This w
 
 ![Like this](docs/img.png)
 
+
 # Other stuff
 JaCoCo: https://severinjo.github.io/DAT251_CarPooling/
 
