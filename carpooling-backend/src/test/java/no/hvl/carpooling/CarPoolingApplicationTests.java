@@ -1,4 +1,4 @@
-package no.hvl.CarPooling;
+package no.hvl.carpooling;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

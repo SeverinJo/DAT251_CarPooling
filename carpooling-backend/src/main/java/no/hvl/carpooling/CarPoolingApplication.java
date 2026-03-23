@@ -1,4 +1,4 @@
-package no.hvl.CarPooling;
+package no.hvl.carpooling;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
