@@ -7,13 +7,15 @@ import {
     Box,
     Button,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
+import GroupIcon from "@mui/icons-material/Group";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import ChatIcon from "@mui/icons-material/Chat";
 import PersonIcon from "@mui/icons-material/Person";
 
 const navItems = [
-    { label: "Search", icon: <SearchIcon />, path: "/" },
-    { label: "Bookings", icon: <BookmarkIcon />, path: "/bookings" },
+    { label: "Feed", icon: <GroupIcon />, path: "/" },
+    { label: "New Trip", icon: <AddCircleOutlineIcon />, path: "/new-trip" },
+    { label: "Chat", icon: <ChatIcon />, path: "/chat" },
     { label: "Profile", icon: <PersonIcon />, path: "/profile" },
 ];
 
@@ -26,9 +28,9 @@ export default function Layout({ children }: LayoutProps) {
     const location = useLocation();
 
     return (
-        <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column", bgcolor: "#f5f5f5" }}>
+        <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column", bgcolor: "background.default" }}>
             <AppBar position="sticky" elevation={1} sx={{ bgcolor: "background.paper", color: "text.primary" }}>
-                <Toolbar>
+                <Toolbar sx={{ width: "100%", px: { xs: 1, md: 3 } }}>
                     <Typography variant="h6" sx={{ fontWeight: 700, color: "primary.main", mr: 4 }}>
                         EverybodyGo
                     </Typography>
@@ -50,7 +52,7 @@ export default function Layout({ children }: LayoutProps) {
                 </Toolbar>
             </AppBar>
 
-            <Box sx={{ flex: 1 }}>
+            <Box sx={{ flex: 1, width: "100%" }}>
                 {children}
             </Box>
         </Box>
