@@ -1,58 +1,90 @@
 package no.hvl.carpooling.integrations.geonorge;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record AddressSearchResponse(
+        @JsonProperty("metadata")
         Metadata metadata,
-        List<Adresse> adresser
+        @JsonProperty("adresser")
+        List<Address> addresses
 ) {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Metadata(
-            Integer viserFra,
-            Boolean asciiKompatibel,
-            Integer treffPerSide,
-            Integer viserTil,
-            Integer side,
-            String sokeStreng,
-            Integer totaltAntallTreff
+            @JsonProperty("viserFra")
+            Integer showingFrom,
+            @JsonProperty("asciiKompatibel")
+            Boolean asciiCompatible,
+            @JsonProperty("treffPerSide")
+            Integer hitsPerPage,
+            @JsonProperty("viserTil")
+            Integer showingTo,
+            @JsonProperty("side")
+            Integer page,
+            @JsonProperty("sokeStreng")
+            String searchString,
+            @JsonProperty("totaltAntallTreff")
+            Integer totalHits
     ) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record Adresse(
-            String adressenavn,
-            String adressetekst,
-            String adressetilleggsnavn,
-            Integer adressekode,
-            Integer nummer,
-            String bokstav,
-            String kommunenummer,
-            String kommunenavn,
-            Integer gardsnummer,
-            Integer bruksnummer,
-            Integer festenummer,
-            Integer undernummer,
-            List<String> bruksenhetsnummer,
-            String objtype,
-            String poststed,
-            String postnummer,
-            String adressetekstutenadressetilleggsnavn,
-            Boolean stedfestingverifisert,
-            Representasjonspunkt representasjonspunkt,
+    public record Address(
+            @JsonProperty("adressenavn")
+            String addressName,
+            @JsonProperty("adressetekst")
+            String addressText,
+            @JsonProperty("adressetilleggsnavn")
+            String addressSupplementaryName,
+            @JsonProperty("adressekode")
+            Integer addressCode,
+            @JsonProperty("nummer")
+            Integer number,
+            @JsonProperty("bokstav")
+            String letter,
+            @JsonProperty("kommunenummer")
+            String municipalityNumber,
+            @JsonProperty("kommunenavn")
+            String municipalityName,
+            @JsonProperty("gardsnummer")
+            Integer cadastralUnitNumber,
+            @JsonProperty("bruksnummer")
+            Integer propertyUnitNumber,
+            @JsonProperty("festenummer")
+            Integer leaseNumber,
+            @JsonProperty("undernummer")
+            Integer subNumber,
+            @JsonProperty("bruksenhetsnummer")
+            List<String> unitNumbers,
+            @JsonProperty("objtype")
+            String objectType,
+            @JsonProperty("poststed")
+            String city,
+            @JsonProperty("postnummer")
+            String postalCode,
+            @JsonProperty("adressetekstutenadressetilleggsnavn")
+            String addressTextWithoutSupplementaryName,
+            @JsonProperty("stedfestingverifisert")
+            Boolean locationVerified,
+            @JsonProperty("representasjonspunkt")
+            RepresentativePoint representativePoint,
             @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-            LocalDateTime oppdateringsdato
+            @JsonProperty("oppdateringsdato")
+            LocalDateTime updatedAt
     ) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record Representasjonspunkt(
+    public record RepresentativePoint(
+            @JsonProperty("epsg")
             String epsg,
-            Double lat,
-            Double lon
+            @JsonProperty("lat")
+            Double latitude,
+            @JsonProperty("lon")
+            Double longitude
     ) {}
 }
