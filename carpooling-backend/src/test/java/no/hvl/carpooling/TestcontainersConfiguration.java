@@ -1,4 +1,4 @@
-package no.hvl.CarPooling;
+package no.hvl.carpooling;
 
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.PortBinding;
