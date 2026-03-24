@@ -3,6 +3,7 @@ export interface User {
     name: string;
     email: string;
     rating: number;
+    avatar?: string;
 }
 
 export interface Vehicle {

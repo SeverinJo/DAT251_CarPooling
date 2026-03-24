@@ -1,11 +1,13 @@
 import type {Trip, Booking, User} from "../types";
+import profilePic from "../assets/beard_bae.jpg"
 
 // Fake logged-in user
 export const currentUser: User = {
     id: "u1",
     name: "Severin",
     email: "severin@example.com",
-    rating: 4.0
+    rating: 4.0,
+    avatar: profilePic
 };
 
 // Fake trip results — what you'd get back from GET /api/trips

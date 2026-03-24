@@ -1,6 +1,7 @@
-  import { useEffect, useState } from "react"
-  import { currentUser, getBookings } from "../api/mock"
-  import type { Booking } from "../types"
+import { useEffect, useState } from "react"
+import { currentUser, getBookings } from "../api/mock"
+import Avatar from "@mui/material/Avatar"
+import type { Booking } from "../types"
 
 function ProfilePage() {
         const [bookings, setBookings] = useState<Booking[]>([])
@@ -16,6 +17,7 @@ function ProfilePage() {
         return (
           <div>
             <h1>{currentUser.name}</h1>
+            <Avatar src={currentUser.avatar} sx={{ width: 400, height: 400 }} />
             <p>Rating: {currentUser.rating}</p>
             <p>{currentUser.email} </p>
             {loading ? <p>Loading...</p> : bookings.map(b => (
