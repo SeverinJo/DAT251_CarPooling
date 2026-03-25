@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AddressService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">carpooling-backend</a> &gt; <a href="index.source.html" class="el_package">no.hvl.carpooling.service</a> &gt; <span class="el_source">AddressService.java</span></div><h1>AddressService.java</h1><pre class="source lang-java linenums">package no.hvl.carpooling.service;
 
 import no.hvl.carpooling.integrations.geonorge.GeonorgeAddressApi;
+import no.hvl.carpooling.service.dto.AddressDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class AddressService {
@@ -10,9 +14,30 @@ public class AddressService {
     private final GeonorgeAddressApi geonorgeAddressApi;
 
     @Autowired
-<span class="fc" id="L13">    public AddressService(GeonorgeAddressApi geonorgeAddressApi) {</span>
-<span class="fc" id="L14">        this.geonorgeAddressApi = geonorgeAddressApi;</span>
-<span class="fc" id="L15">    }</span>
+<span class="fc" id="L17">    public AddressService(GeonorgeAddressApi geonorgeAddressApi) {</span>
+<span class="fc" id="L18">        this.geonorgeAddressApi = geonorgeAddressApi;</span>
+<span class="fc" id="L19">    }</span>
+
+    public List&lt;AddressDto&gt; search(String query) {
+<span class="nc" id="L22">        var response = geonorgeAddressApi.search(query);</span>
+<span class="nc bnc" id="L23" title="All 4 branches missed.">        if (response == null || response.addresses() == null) {</span>
+<span class="nc" id="L24">            return Collections.emptyList();</span>
+        }
+
+<span class="nc" id="L27">        return response.addresses().stream()</span>
+<span class="nc" id="L28">            .map(a -&gt; new AddressDto(</span>
+<span class="nc" id="L29">                    a.addressName(),</span>
+<span class="nc" id="L30">                    a.number(),</span>
+<span class="nc" id="L31">                    a.letter(),</span>
+<span class="nc" id="L32">                    a.municipalityName(),</span>
+<span class="nc" id="L33">                    a.city(),</span>
+<span class="nc" id="L34">                    a.postalCode(),</span>
+<span class="nc" id="L35">                    a.representativePoint().epsg(),</span>
+<span class="nc" id="L36">                    a.representativePoint().latitude(),</span>
+<span class="nc" id="L37">                    a.representativePoint().longitude()</span>
+            ))
+<span class="nc" id="L39">            .toList();</span>
+    }
 
     // todo: add address business functions here
 

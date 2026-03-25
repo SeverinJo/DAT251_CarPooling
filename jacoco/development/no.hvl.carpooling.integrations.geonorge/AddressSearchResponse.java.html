@@ -1,59 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AddressSearchResponse.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">carpooling-backend</a> &gt; <a href="index.source.html" class="el_package">no.hvl.carpooling.integrations.geonorge</a> &gt; <span class="el_source">AddressSearchResponse.java</span></div><h1>AddressSearchResponse.java</h1><pre class="source lang-java linenums">package no.hvl.carpooling.integrations.geonorge;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 <span class="fc" id="L11">public record AddressSearchResponse(</span>
+        @JsonProperty(&quot;metadata&quot;)
         Metadata metadata,
-        List&lt;Adresse&gt; adresser
+        @JsonProperty(&quot;adresser&quot;)
+        List&lt;Address&gt; addresses
 ) {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-<span class="fc" id="L17">    public record Metadata(</span>
-            Integer viserFra,
-            Boolean asciiKompatibel,
-            Integer treffPerSide,
-            Integer viserTil,
-            Integer side,
-            String sokeStreng,
-            Integer totaltAntallTreff
+<span class="fc" id="L19">    public record Metadata(</span>
+            @JsonProperty(&quot;viserFra&quot;)
+            Integer showingFrom,
+            @JsonProperty(&quot;asciiKompatibel&quot;)
+            Boolean asciiCompatible,
+            @JsonProperty(&quot;treffPerSide&quot;)
+            Integer hitsPerPage,
+            @JsonProperty(&quot;viserTil&quot;)
+            Integer showingTo,
+            @JsonProperty(&quot;side&quot;)
+            Integer page,
+            @JsonProperty(&quot;sokeStreng&quot;)
+            String searchString,
+            @JsonProperty(&quot;totaltAntallTreff&quot;)
+            Integer totalHits
     ) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-<span class="fc" id="L28">    public record Adresse(</span>
-            String adressenavn,
-            String adressetekst,
-            String adressetilleggsnavn,
-            Integer adressekode,
-            Integer nummer,
-            String bokstav,
-            String kommunenummer,
-            String kommunenavn,
-            Integer gardsnummer,
-            Integer bruksnummer,
-            Integer festenummer,
-            Integer undernummer,
-            List&lt;String&gt; bruksenhetsnummer,
-            String objtype,
-            String poststed,
-            String postnummer,
-            String adressetekstutenadressetilleggsnavn,
-            Boolean stedfestingverifisert,
-            Representasjonspunkt representasjonspunkt,
+<span class="fc" id="L37">    public record Address(</span>
+            @JsonProperty(&quot;adressenavn&quot;)
+            String addressName,
+            @JsonProperty(&quot;adressetekst&quot;)
+            String addressText,
+            @JsonProperty(&quot;adressetilleggsnavn&quot;)
+            String addressSupplementaryName,
+            @JsonProperty(&quot;adressekode&quot;)
+            Integer addressCode,
+            @JsonProperty(&quot;nummer&quot;)
+            Integer number,
+            @JsonProperty(&quot;bokstav&quot;)
+            String letter,
+            @JsonProperty(&quot;kommunenummer&quot;)
+            String municipalityNumber,
+            @JsonProperty(&quot;kommunenavn&quot;)
+            String municipalityName,
+            @JsonProperty(&quot;gardsnummer&quot;)
+            Integer cadastralUnitNumber,
+            @JsonProperty(&quot;bruksnummer&quot;)
+            Integer propertyUnitNumber,
+            @JsonProperty(&quot;festenummer&quot;)
+            Integer leaseNumber,
+            @JsonProperty(&quot;undernummer&quot;)
+            Integer subNumber,
+            @JsonProperty(&quot;bruksenhetsnummer&quot;)
+            List&lt;String&gt; unitNumbers,
+            @JsonProperty(&quot;objtype&quot;)
+            String objectType,
+            @JsonProperty(&quot;poststed&quot;)
+            String city,
+            @JsonProperty(&quot;postnummer&quot;)
+            String postalCode,
+            @JsonProperty(&quot;adressetekstutenadressetilleggsnavn&quot;)
+            String addressTextWithoutSupplementaryName,
+            @JsonProperty(&quot;stedfestingverifisert&quot;)
+            Boolean locationVerified,
+            @JsonProperty(&quot;representasjonspunkt&quot;)
+            RepresentativePoint representativePoint,
             @JsonFormat(pattern = &quot;yyyy-MM-dd'T'HH:mm:ss&quot;)
-            LocalDateTime oppdateringsdato
+            @JsonProperty(&quot;oppdateringsdato&quot;)
+            LocalDateTime updatedAt
     ) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-<span class="fc" id="L53">    public record Representasjonspunkt(</span>
+<span class="fc" id="L82">    public record RepresentativePoint(</span>
+            @JsonProperty(&quot;epsg&quot;)
             String epsg,
-            Double lat,
-            Double lon
+            @JsonProperty(&quot;lat&quot;)
+            Double latitude,
+            @JsonProperty(&quot;lon&quot;)
+            Double longitude
     ) {}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>
