@@ -34,6 +34,9 @@ dependencies {
 	testImplementation("org.testcontainers:postgresql")
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 }
 
 tasks.withType<Test> {
