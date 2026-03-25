@@ -31,11 +31,11 @@ public class TestcontainersConfiguration {
         container = container.withUsername("test");
         container = container.withPassword("test");
 
-        /*container = container.withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
+        container = container.withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
                 Objects.requireNonNull(cmd.getHostConfig()).withPortBindings(new PortBinding(
                         Ports.Binding.bindPort(32780), new ExposedPort(5432)
                 ))
-        ));*/
+        ));
 
         container.start();
 

@@ -15,7 +15,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@Import(TestcontainersConfiguration.class)
+@Import(RepositoryTestcontainersConfiguration.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserRepositoryTest {
 
@@ -27,7 +27,6 @@ public class UserRepositoryTest {
 
     @BeforeEach
     void setUp(){
-        userRepository.deleteAll();
         user = new User("name", "email", "password");
         saved = userRepository.save(user);
     }
