@@ -19,10 +19,29 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserRepositoryTest {
 
     @Autowired
+    private javax.sql.DataSource dataSource;
+
+    @Autowired
+    private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+
+    @Autowired
     private UserRepository userRepository;
 
     private User user;
     private User saved;
+
+    @Test
+    void debugDatasource() throws Exception {
+        try (var conn = dataSource.getConnection()) {
+            System.out.println("URL = " + conn.getMetaData().getURL());
+            System.out.println("Schema = " + conn.getSchema());
+        }
+        System.out.println("Tables = " +
+                jdbcTemplate.queryForList(
+                        "select table_schema, table_name from information_schema.tables where table_name = 'user_table'"
+                )
+        );
+    }
 
     @BeforeEach
     void setUp(){
