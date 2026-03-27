@@ -1,6 +1,5 @@
 package no.hvl.carpooling.repository;
-/*
-import no.hvl.carpooling.TestcontainersConfiguration;
+
 import no.hvl.carpooling.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,8 @@ public class UserRepositoryTest {
 
     @BeforeEach
     void setUp(){
+        userRepository.deleteAll();
+        userRepository.flush();
         user = new User("name", "email", "password");
         saved = userRepository.save(user);
     }
@@ -83,4 +84,4 @@ public class UserRepositoryTest {
         Optional<User> deletedUser = userRepository.findById(saved.getId());
         assertFalse(deletedUser.isPresent());
     }
-}*/
+}
