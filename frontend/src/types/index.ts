@@ -3,6 +3,7 @@ export interface User {
     name: string;
     email: string;
     rating: number;
+    vehicle?: Vehicle;
     avatar?: string;
 }
 
