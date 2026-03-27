@@ -18,7 +18,7 @@ public class SmokeGeonorgeAddressApiTest {
     void smoke() {
         var query = "Inndalsveien 28 Bergen";
         var searchResult = Assertions.assertDoesNotThrow(() -> geonorgeAddressApi.search(query));
-        Assertions.assertFalse(searchResult.adresser().isEmpty());
+        Assertions.assertFalse(searchResult.addresses().isEmpty());
         System.out.println(searchResult);
     }
 
