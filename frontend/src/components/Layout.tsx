@@ -5,18 +5,19 @@ import {
     Toolbar,
     Typography,
     Box,
-    Button,
+    ButtonBase,
 } from "@mui/material";
 import GroupIcon from "@mui/icons-material/Group";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ChatIcon from "@mui/icons-material/Chat";
 import PersonIcon from "@mui/icons-material/Person";
+import EnergySavingsLeafIcon from "@mui/icons-material/EnergySavingsLeaf";
 
 const navItems = [
-    { label: "Feed", icon: <GroupIcon />, path: "/" },
-    { label: "New Trip", icon: <AddCircleOutlineIcon />, path: "/new-trip" },
-    { label: "Chat", icon: <ChatIcon />, path: "/chat" },
-    { label: "Profile", icon: <PersonIcon />, path: "/profile" },
+    { label: "Feed", icon: <GroupIcon fontSize="small" />, path: "/" },
+    { label: "New Trip", icon: <AddCircleOutlineIcon fontSize="small" />, path: "/new-trip" },
+    { label: "Chat", icon: <ChatIcon fontSize="small" />, path: "/chat" },
+    { label: "Profile", icon: <PersonIcon fontSize="small" />, path: "/profile" },
 ];
 
 interface LayoutProps {
@@ -29,26 +30,71 @@ export default function Layout({ children }: LayoutProps) {
 
     return (
         <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column", bgcolor: "background.default" }}>
-            <AppBar position="sticky" elevation={1} sx={{ bgcolor: "background.paper", color: "text.primary" }}>
-                <Toolbar sx={{ width: "100%", px: { xs: 1, md: 3 } }}>
-                    <Typography variant="h6" sx={{ fontWeight: 700, color: "primary.main", mr: 4 }}>
-                        EverybodyGo
-                    </Typography>
-                    {navItems.map((item) => (
-                        <Button
-                            key={item.label}
-                            startIcon={item.icon}
-                            onClick={() => navigate(item.path)}
+            <AppBar
+                position="sticky"
+                elevation={0}
+                sx={{
+                    bgcolor: "rgba(255,255,255,0.82)",
+                    backdropFilter: "blur(12px)",
+                    borderBottom: "1px solid",
+                    borderColor: "rgba(80,123,0,0.12)",
+                    color: "text.primary",
+                }}
+            >
+                <Toolbar sx={{ px: { xs: 2, md: 4 } }}>
+                    {/* Logo */}
+                    <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1, cursor: "pointer" }}
+                        onClick={() => navigate("/")}
+                    >
+                        <EnergySavingsLeafIcon sx={{ color: "primary.main", fontSize: 28 }} />
+                        <Typography
+                            variant="h6"
                             sx={{
-                                color: location.pathname === item.path ? "primary.main" : "text.secondary",
-                                fontWeight: location.pathname === item.path ? 700 : 400,
-                                textTransform: "none",
-                                mr: 1,
+                                fontWeight: 800,
+                                letterSpacing: "-0.5px",
+                                color: "primary.main",
+                                lineHeight: 1,
                             }}
                         >
-                            {item.label}
-                        </Button>
-                    ))}
+                            EverybodyGo
+                        </Typography>
+                    </Box>
+
+                    <Box sx={{ flex: 1 }} />
+
+                    {/* Nav items */}
+                    <Box sx={{ display: "flex", gap: 0.5 }}>
+                        {navItems.map((item) => {
+                            const active = location.pathname === item.path;
+                            return (
+                                <ButtonBase
+                                    key={item.label}
+                                    onClick={() => navigate(item.path)}
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 0.75,
+                                        px: 1.5,
+                                        py: 0.75,
+                                        borderRadius: 2,
+                                        fontSize: "0.875rem",
+                                        fontWeight: active ? 700 : 500,
+                                        color: active ? "primary.main" : "text.secondary",
+                                        bgcolor: active ? "rgba(80,123,0,0.08)" : "transparent",
+                                        transition: "all 0.15s ease",
+                                        "&:hover": {
+                                            bgcolor: "rgba(80,123,0,0.06)",
+                                            color: "primary.main",
+                                        },
+                                    }}
+                                >
+                                    {item.icon}
+                                    {item.label}
+                                </ButtonBase>
+                            );
+                        })}
+                    </Box>
                 </Toolbar>
             </AppBar>
 
