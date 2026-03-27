@@ -1,6 +1,7 @@
 package no.hvl.carpooling.repository;
 
 import no.hvl.carpooling.model.User;
+import org.flywaydb.core.internal.jdbc.JdbcTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,18 @@ public class UserRepositoryTest {
 
     private User user;
     private User saved;
+
+    @Test
+    void debugTables() {
+        System.out.println(
+                jdbcTemplate.queryForList("""
+            select table_schema, table_name
+            from information_schema.tables
+            where table_schema = 'public'
+            order by table_name
+        """)
+        );
+    }
 
     @Test
     void debugDatasource() throws Exception {
