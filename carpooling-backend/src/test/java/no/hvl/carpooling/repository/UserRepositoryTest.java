@@ -14,16 +14,13 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
+@DataJpaTest(properties = {
+        "spring.flyway.enabled=false",
+        "spring.jpa.hibernate.ddl-auto=create-drop"
+})
 @Import(RepositoryTestcontainersConfiguration.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserRepositoryTest {
-
-    @Autowired
-    private javax.sql.DataSource dataSource;
-
-    @Autowired
-    private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
     @Autowired
     private UserRepository userRepository;
@@ -31,39 +28,8 @@ public class UserRepositoryTest {
     private User user;
     private User saved;
 
-    @Test
-    void debugTables() {
-        System.out.println(
-                jdbcTemplate.queryForList("""
-            select table_schema, table_name
-            from information_schema.tables
-            where table_schema = 'public'
-            order by table_name
-        """)
-        );
-    }
-
-    @Test
-    void debugDatasource() throws Exception {
-        try (var conn = dataSource.getConnection()) {
-            System.out.println("URL = " + conn.getMetaData().getURL());
-            System.out.println("Schema = " + conn.getSchema());
-        }
-        System.out.println("Tables = " +
-                jdbcTemplate.queryForList(
-                        "select table_schema, table_name from information_schema.tables where table_name = 'user_table'"
-                )
-        );
-    }
-
     @BeforeEach
     void setUp(){
-        Integer count = jdbcTemplate.queryForObject(
-                "select count(*) from information_schema.tables where table_schema = 'public' and table_name = 'user_table'",
-                Integer.class
-        );
-        assertEquals(1, count);
-
         user = new User("name", "email", "password");
         saved = userRepository.save(user);
     }
