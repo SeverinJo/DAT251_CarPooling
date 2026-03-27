@@ -58,8 +58,12 @@ public class UserRepositoryTest {
 
     @BeforeEach
     void setUp(){
-        userRepository.deleteAll();
-        userRepository.flush();
+        Integer count = jdbcTemplate.queryForObject(
+                "select count(*) from information_schema.tables where table_schema = 'public' and table_name = 'user_table'",
+                Integer.class
+        );
+        assertEquals(1, count);
+
         user = new User("name", "email", "password");
         saved = userRepository.save(user);
     }
