@@ -7,6 +7,7 @@ import TripPlanningPage from "./pages/TripPlanning";
 import TripDetailsPage from "./pages/TripDetailsPage";
 import FeedPage from "./pages/FeedPage";
 import ChatPage from "./pages/ChatPage";
+import NewTripPage from "./pages/NewTripPage.tsx";
 
 import ProfilePage from "./pages/ProfilePage";
 
@@ -35,10 +36,13 @@ function App() {
                 <Layout>
                     <Routes>
                         <Route path="/" element={<HomePage />} />
+                        <Route path="/feed/carpoolers" element={<FeedPage />} />
+                        <Route path="/feed/groups" element={<HomePage />} />
+                        <Route path="/feed/discover" element={<FeedPage />} />
                         <Route path="/login" element={<LoginPage />} />
-                        <Route path="/search" element={<TripPlanningPage />} />
+                        <Route path="/trip/search" element={<TripPlanningPage />} />
+                        <Route path="/trip/offer" element={<NewTripPage />} />
                         <Route path="/trip/:id" element={<TripDetailsPage />} />
-                        <Route path="/feed" element={<FeedPage />} />
                         <Route path="/chat" element={<ChatPage />} />
                         <Route path="/chat/:id" element={<ChatPage />} />
                         <Route path="/profile" element={<ProfilePage />} />
