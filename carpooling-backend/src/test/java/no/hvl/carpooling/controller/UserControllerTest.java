@@ -1,6 +1,7 @@
 package no.hvl.carpooling.controller;
 
 import no.hvl.carpooling.model.User;
+import no.hvl.carpooling.service.JwtAuthFilter;
 import no.hvl.carpooling.service.UserService;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
@@ -34,6 +35,9 @@ public class UserControllerTest {
 
     @MockitoBean
     private UserService userService;
+
+    @MockitoBean
+    private JwtAuthFilter jwtAuthFilter;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
