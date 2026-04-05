@@ -1,7 +1,7 @@
 package no.hvl.carpooling.repository;
 /*
 import no.hvl.carpooling.TestcontainersConfiguration;
-import no.hvl.carpooling.model.User;
+import no.hvl.carpooling.persistence.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.junit.jupiter.api.Test;
