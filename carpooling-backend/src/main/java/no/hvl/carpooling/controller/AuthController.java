@@ -43,7 +43,8 @@ public class AuthController {
         var user = userOpt.get();
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid username or password");
         }
 
