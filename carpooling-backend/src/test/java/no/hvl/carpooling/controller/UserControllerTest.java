@@ -40,9 +40,6 @@ public class UserControllerTest {
     @MockitoBean
     private JwtAuthFilter jwtAuthFilter;
 
-    @MockitoBean
-    private PasswordEncoder passwordEncoder;
-
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
@@ -53,7 +50,6 @@ public class UserControllerTest {
         user.setEmail("email");
         user.setPassword("password1");
 
-        when(passwordEncoder.encode(any())).thenReturn("$2a$10$B3pyiJJICeggn/xUzK5nSemognKbhP5hYKdOtvsUC4jxHNOWSCj5G");
         when(userService.createUser(any(User.class))).thenReturn(user);
 
         mockMvc.perform(post("/users").content(objectMapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andExpect(jsonPath("$.id").value(1)).andExpect(jsonPath("$.username").value("name")).andExpect(jsonPath("$.email").value("email"));
