@@ -3,7 +3,6 @@ package no.hvl.carpooling.controller;
 import no.hvl.carpooling.model.User;
 import no.hvl.carpooling.service.JwtAuthFilter;
 import no.hvl.carpooling.service.UserService;
-import org.mockito.Mock;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.junit.jupiter.api.Test;
@@ -41,7 +40,7 @@ public class UserControllerTest {
     @MockitoBean
     private JwtAuthFilter jwtAuthFilter;
 
-    @Mock
+    @MockitoBean
     private PasswordEncoder passwordEncoder;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
