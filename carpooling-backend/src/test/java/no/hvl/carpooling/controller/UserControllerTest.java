@@ -3,6 +3,7 @@ package no.hvl.carpooling.controller;
 import no.hvl.carpooling.model.User;
 import no.hvl.carpooling.service.JwtAuthFilter;
 import no.hvl.carpooling.service.UserService;
+import org.mockito.Mock;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ public class UserControllerTest {
     @MockitoBean
     private JwtAuthFilter jwtAuthFilter;
 
-    @MockitoBean
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -51,8 +52,9 @@ public class UserControllerTest {
         user.setId(1L);
         user.setUsername("name");
         user.setEmail("email");
-        user.setPassword("password");
+        user.setPassword("password1");
 
+        when(passwordEncoder.encode(any())).thenReturn("$2a$10$B3pyiJJICeggn/xUzK5nSemognKbhP5hYKdOtvsUC4jxHNOWSCj5G");
         when(userService.createUser(any(User.class))).thenReturn(user);
 
         mockMvc.perform(post("/users").content(objectMapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andExpect(jsonPath("$.id").value(1)).andExpect(jsonPath("$.username").value("name")).andExpect(jsonPath("$.email").value("email"));
