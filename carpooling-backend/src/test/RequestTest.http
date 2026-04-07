@@ -5,7 +5,7 @@ Content-Type: application/json
 {
   "username": "customUser",
   "email": "customUser@test.com",
-  "password": "customUsersPassword"
+  "hashedPassword": "customUsersPassword"
 }
 
 ### Login Test
