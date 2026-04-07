@@ -10,6 +10,13 @@ Include #major, #minor or #patch in pull-request title to mark a release. This w
 
 ![Like this](docs/img.png)
 
+# Backend (local build)
+Backend is a standalone Gradle project in `carpooling-backend/`.
+
+```sh
+cd carpooling-backend
+./gradlew build
+```
 
 # Other stuff
 JaCoCo: https://severinjo.github.io/DAT251_CarPooling/

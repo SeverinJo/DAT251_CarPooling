@@ -5,6 +5,7 @@ on:
     branches:
       - "main"
       - "development"
+      - "feature/**"
   pull_request:
     branches:
       - "development"
@@ -26,37 +27,36 @@ jobs:
           distribution: temurin
           java-version: "21"
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
       - name: Make gradlew executable
+        working-directory: carpooling-backend
         run: chmod +x ./gradlew
 
       - name: Build & test (backend)
-        run: ./gradlew :backend:build :backend:jacocoTestReport
+        working-directory: carpooling-backend
+        run: ./gradlew build jacocoTestReport
 
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: backend-test-reports
+          name: carpooling-backend-test-reports
           path: |
-            backend/**/build/reports/tests/test
-            backend/**/build/test-results/test
+            carpooling-backend/**/build/reports/tests/test
+            carpooling-backend/**/build/test-results/test
 
       - name: Upload jar
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: backend-jar
-          path: backend/**/build/libs/*.jar
+          name: carpooling-backend-jar
+          path: carpooling-backend/**/build/libs/*.jar
 
       - name: Deploy JaCoCo report to GitHub Pages (DEV)
         if: github.event_name == 'push' && github.ref == 'refs/heads/development'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: backend/build/reports/jacoco/test/html
+          publish_dir: carpooling-backend/build/reports/jacoco/test/html
           destination_dir: jacoco/development
           keep_files: true
 
@@ -65,7 +65,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: backend/build/reports/jacoco/test/html
+          publish_dir: carpooling-backend/build/reports/jacoco/test/html
           destination_dir: jacoco/main
           keep_files: true
   #
@@ -83,7 +83,7 @@ jobs:
       - name: Download built JAR
         uses: actions/download-artifact@v4
         with:
-          name: backend-jar
+          name: carpooling-backend-jar
           path: dist
 
       - name: Auto-bump version tag
