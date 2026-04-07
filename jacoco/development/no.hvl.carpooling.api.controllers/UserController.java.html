@@ -2,9 +2,11 @@
 
 import jakarta.validation.Valid;
 import no.hvl.carpooling.persistence.entity.User;
+import no.hvl.carpooling.persistence.entity.UserPrincipal;
 import no.hvl.carpooling.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,37 +16,37 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-<span class="fc" id="L17">    public UserController(UserService userService){</span>
-<span class="fc" id="L18">        this.userService = userService;</span>
-<span class="fc" id="L19">    }</span>
+<span class="fc" id="L19">    public UserController(UserService userService){</span>
+<span class="fc" id="L20">        this.userService = userService;</span>
+<span class="fc" id="L21">    }</span>
 
     @PostMapping
     public ResponseEntity&lt;User&gt; createUser(@Valid @RequestBody User user){
-<span class="fc" id="L23">        User createdUser = userService.saveUser(user);</span>
-<span class="fc" id="L24">        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);</span>
+<span class="fc" id="L25">        User createdUser = userService.saveUser(user);</span>
+<span class="fc" id="L26">        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);</span>
     }
 
     @GetMapping
     public ResponseEntity&lt;List&lt;User&gt;&gt; getAllUsers(){
-<span class="fc" id="L29">        List&lt;User&gt; users = userService.getAllUsers();</span>
-<span class="fc" id="L30">        return ResponseEntity.ok(users);</span>
+<span class="fc" id="L31">        List&lt;User&gt; users = userService.getAllUsers();</span>
+<span class="fc" id="L32">        return ResponseEntity.ok(users);</span>
     }
 
     @GetMapping(&quot;/{id}&quot;)
     public ResponseEntity&lt;User&gt; getUserById(@PathVariable Integer id){
-<span class="fc" id="L35">        return userService.getUserById(id).map(ResponseEntity::ok).orElseGet(() -&gt; ResponseEntity.notFound().build());</span>
+<span class="fc" id="L37">        return userService.getUserById(id).map(ResponseEntity::ok).orElseGet(() -&gt; ResponseEntity.notFound().build());</span>
     }
 
     @PutMapping(&quot;/{id}&quot;)
     public ResponseEntity&lt;User&gt; updateUser(@PathVariable Integer id, @RequestBody User user){
-<span class="fc" id="L40">        User updatedUser = userService.updateUser(id, user);</span>
-<span class="fc" id="L41">        return ResponseEntity.ok(updatedUser);</span>
+<span class="fc" id="L42">        User updatedUser = userService.updateUser(id, user);</span>
+<span class="fc" id="L43">        return ResponseEntity.ok(updatedUser);</span>
     }
 
     @DeleteMapping(&quot;/{id}&quot;)
     public ResponseEntity&lt;Void&gt; deleteUser(@PathVariable Integer id){
-<span class="fc" id="L46">        userService.deleteUser(id);</span>
-<span class="fc" id="L47">        return ResponseEntity.noContent().build();</span>
+<span class="fc" id="L48">        userService.deleteUser(id);</span>
+<span class="fc" id="L49">        return ResponseEntity.noContent().build();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>
