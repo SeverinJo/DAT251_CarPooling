@@ -1,7 +1,7 @@
 package no.hvl.carpooling.controller;
 
 import jakarta.transaction.Transactional;
-import no.hvl.carpooling.repository.UserRepository;
+import no.hvl.carpooling.persistence.repository.UserRepository;
 import no.hvl.carpooling.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,7 +43,7 @@ public class AuthController {
 
         var user = userOpt.get();
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!passwordEncoder.matches(password, user.getHashedPassword())) {
             return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid username or password");

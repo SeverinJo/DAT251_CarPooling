@@ -1,6 +1,6 @@
 package no.hvl.carpooling.service;
 
-import no.hvl.carpooling.repository.UserRepository;
+import no.hvl.carpooling.persistence.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import jakarta.transaction.Transactional;
 import no.hvl.carpooling.persistence.entity.User;
@@ -20,13 +20,14 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional(value = REQUIRES_NEW)
     public User saveUser(User user){
+        user.setHashedPassword(passwordEncoder.encode(user.getHashedPassword()));
         return userRepository.save(user);
     }
 
