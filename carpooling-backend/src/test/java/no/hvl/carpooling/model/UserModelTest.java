@@ -1,5 +1,6 @@
 package no.hvl.carpooling.model;
 
+import no.hvl.carpooling.persistence.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +39,7 @@ public class UserModelTest {
 
     @Test
     void canRetrieveCorrectPasswordFromUser(){
-        String gettedUserPassword = fullUser.getPassword();
+        String gettedUserPassword = fullUser.getHashedPassword();
         assertEquals(gettedUserPassword, password);
     }
     @Test
@@ -63,7 +64,7 @@ public class UserModelTest {
     @Test
     void canGivePasswordToUser(){
         String newPassword = "newPassword";
-        user.setPassword(newPassword);
-        assertEquals(newPassword, user.getPassword());
+        user.setHashedPassword(newPassword);
+        assertEquals(newPassword, user.getHashedPassword());
     }
 }
