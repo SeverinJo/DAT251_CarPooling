@@ -1,7 +1,7 @@
 package no.hvl.carpooling.repository;
-/*
-import no.hvl.carpooling.TestcontainersConfiguration;
+
 import no.hvl.carpooling.model.User;
+import org.flywaydb.core.internal.jdbc.JdbcTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,10 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
+@DataJpaTest(properties = {
+        "spring.flyway.enabled=false",
+        "spring.jpa.hibernate.ddl-auto=create-drop"
+})
 @Import(RepositoryTestcontainersConfiguration.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserRepositoryTest {
@@ -83,4 +86,4 @@ public class UserRepositoryTest {
         Optional<User> deletedUser = userRepository.findById(saved.getId());
         assertFalse(deletedUser.isPresent());
     }
-}*/
+}
