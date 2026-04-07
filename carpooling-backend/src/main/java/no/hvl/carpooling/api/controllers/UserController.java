@@ -2,9 +2,11 @@ package no.hvl.carpooling.api.controllers;
 
 import jakarta.validation.Valid;
 import no.hvl.carpooling.persistence.entity.User;
+import no.hvl.carpooling.persistence.entity.UserPrincipal;
 import no.hvl.carpooling.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
