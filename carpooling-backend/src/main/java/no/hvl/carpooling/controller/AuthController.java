@@ -34,7 +34,8 @@ public class AuthController {
         var userOpt = userRepository.findByUsername(username);
 
         if (userOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid username or password");
         }
         System.out.println(userOpt.get().getUsername());
