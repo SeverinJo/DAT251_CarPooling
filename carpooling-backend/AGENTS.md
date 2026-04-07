@@ -42,6 +42,7 @@ Reference commands (run only if asked):
 - Persistence:
   - Be explicit about fetch strategy and pagination; avoid unbounded queries.
   - Call out likely N+1 patterns and suggest minimal fixes (fetch joins, entity graphs, batching) when seen.
+  - Spring Data derived queries: prefer camel-case nested property traversal (e.g. `findByTripIdAndUserId`) over underscore-separated paths.
 - Migrations:
   - Treat Flyway migrations as production contracts; do not introduce destructive changes without explicit approval.
 

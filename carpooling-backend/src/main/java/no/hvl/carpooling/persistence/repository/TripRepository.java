@@ -11,7 +11,7 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
 
     /**
      * A trip is considered "available" when the number of APPROVED participants is strictly less than seats_available.
-     * Native query is used since trip participants are not mapped as a JPA entity in this codebase.
+     * Native query is used to keep the query simple and efficient.
      */
     @Query(
         value = """

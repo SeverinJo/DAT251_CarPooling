@@ -33,8 +33,8 @@ public class TripController {
             request.startAddress(),
             request.destinationAddress(),
             request.departureTimeInIsoFormat(),
-            request.seatsAvailable()
-            // todo: give user principal to service (maybe just userId?)
+            request.seatsAvailable(),
+            null // todo: give user to service
         );
 
         var response = new TripDto(

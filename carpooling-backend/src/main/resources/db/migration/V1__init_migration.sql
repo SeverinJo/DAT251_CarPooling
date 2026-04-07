@@ -1,4 +1,3 @@
--- this is just an example table, change later to match actual db tables
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
