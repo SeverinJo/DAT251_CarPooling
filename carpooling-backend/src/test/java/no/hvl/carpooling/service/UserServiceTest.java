@@ -1,13 +1,11 @@
 package no.hvl.carpooling.service;
 
-import no.hvl.carpooling.model.User;
-import no.hvl.carpooling.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
+import no.hvl.carpooling.persistence.entity.User;
+import no.hvl.carpooling.persistence.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -35,12 +33,12 @@ public class UserServiceTest {
         User user = new User();
         user.setUsername("name");
         user.setEmail("email");
-        user.setPassword("password1");
+        user.setHashedPassword("password1");
 
         when(passwordEncoder.encode(any())).thenReturn("$2a$10$B3pyiJJICeggn/xUzK5nSemognKbhP5hYKdOtvsUC4jxHNOWSCj5G");
 
         when(userRepository.save(user)).thenReturn(user);
-        User saved = userService.createUser(user);
+        User saved = userService.saveUser(user);
 
         assertNotNull(saved);
         assertEquals("name", saved.getUsername());
@@ -56,8 +54,8 @@ public class UserServiceTest {
         user2.setUsername("name2");
         user1.setEmail("email1");
         user2.setEmail("email2");
-        user1.setPassword("password1");
-        user2.setPassword("password2");
+        user1.setHashedPassword("password1");
+        user2.setHashedPassword("password2");
 
         when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
         List<User> users = userService.getAllUsers();
@@ -71,15 +69,15 @@ public class UserServiceTest {
         User user = new User();
         user.setUsername("name");
         user.setEmail("email");
-        user.setPassword("password");
+        user.setHashedPassword("password");
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1)).thenReturn(Optional.of(user));
 
-        Optional<User> givenUser = userService.getUserById(1L);
+        Optional<User> givenUser = userService.getUserById(1);
 
         assertTrue(givenUser.isPresent());
         assertEquals("name", givenUser.get().getUsername());
-        verify(userRepository, times(1)).findById(1L);
+        verify(userRepository, times(1)).findById(1);
     }
 
     @Test
@@ -87,22 +85,22 @@ public class UserServiceTest {
         User user1 = new User();
         user1.setUsername("name1");
         user1.setEmail("email1");
-        user1.setPassword("password1");
+        user1.setHashedPassword("password1");
 
         User user2 = new User();
         user2.setUsername("name2");
         user2.setEmail("email2");
-        user2.setPassword("password2");
+        user2.setHashedPassword("password2");
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+        when(userRepository.findById(1)).thenReturn(Optional.of(user1));
         when(userRepository.save(user1)).thenReturn(user1);
 
-        User resultingUser = userService.updateUser(1L, user2);
+        User resultingUser = userService.updateUser(1, user2);
 
         assertNotNull(resultingUser);
         assertEquals("name2", resultingUser.getUsername());
         assertEquals("email2", resultingUser.getEmail());
-        verify(userRepository, times(1)).findById(1L);
+        verify(userRepository, times(1)).findById(1);
         verify(userRepository, times(1)).save(user1);
     }
 
@@ -112,34 +110,34 @@ public class UserServiceTest {
         user1.setUsername("name1");
         user1.setEmail("email1");
 
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(1)).thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.updateUser(1L, user1));
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.updateUser(1, user1));
 
         assertEquals("No found user", exception.getMessage());
-        verify(userRepository, times(1)).findById(1L);
+        verify(userRepository, times(1)).findById(1);
         verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
     void deleteUser(){
-        when(userRepository.existsById(1L)).thenReturn(true);
-        doNothing().when(userRepository).deleteById(1L);
+        when(userRepository.existsById(1)).thenReturn(true);
+        doNothing().when(userRepository).deleteById(1);
 
-        userService.deleteUser(1L);
+        userService.deleteUser(1);
 
-        verify(userRepository, times(1)).existsById(1L);
-        verify(userRepository, times(1)).deleteById(1L);
+        verify(userRepository, times(1)).existsById(1);
+        verify(userRepository, times(1)).deleteById(1);
     }
 
     @Test
     void ifNoUserFoundOnDeletePlsThrowException(){
-        when(userRepository.existsById(1L)).thenReturn(false);
+        when(userRepository.existsById(1)).thenReturn(false);
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.deleteUser(1L));
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.deleteUser(1));
 
         assertEquals("No found user", exception.getMessage());
-        verify(userRepository, times(1)).existsById(1L);
-        verify(userRepository, never()).deleteById(anyLong());
+        verify(userRepository, times(1)).existsById(1);
+        verify(userRepository, never()).deleteById(anyInt());
     }
 }

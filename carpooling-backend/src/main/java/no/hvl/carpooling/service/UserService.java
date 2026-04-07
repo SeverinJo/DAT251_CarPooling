@@ -1,12 +1,17 @@
 package no.hvl.carpooling.service;
 
-import no.hvl.carpooling.model.User;
 import no.hvl.carpooling.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import jakarta.transaction.Transactional;
+import no.hvl.carpooling.persistence.entity.User;
+import no.hvl.carpooling.persistence.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static jakarta.transaction.Transactional.TxType.REQUIRES_NEW;
 
 @Service
 public class UserService {
@@ -14,25 +19,29 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
+    @Autowired
+    public UserService(UserRepository userRepository){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User createUser(User user){
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    @Transactional(value = REQUIRES_NEW)
+    public User saveUser(User user){
         return userRepository.save(user);
     }
 
+    @Transactional
     public List<User> getAllUsers(){
         return userRepository.findAll();
     }
 
-    public Optional<User> getUserById(Long id){
+    @Transactional
+    public Optional<User> getUserById(int id){
         return userRepository.findById(id);
     }
 
-    public User updateUser(Long id, User newUserDetails){
+    @Transactional(value = REQUIRES_NEW)
+    public User updateUser(Integer id, User newUserDetails){
         return userRepository.findById(id).map(currentUser -> {
             currentUser.setUsername(newUserDetails.getUsername());
             currentUser.setEmail(newUserDetails.getEmail());
@@ -40,10 +49,12 @@ public class UserService {
         }).orElseThrow(() -> new RuntimeException("No found user"));
     }
 
-    public void deleteUser(Long id){
+    @Transactional(value = REQUIRES_NEW)
+    public void deleteUser(Integer id){
         if(!userRepository.existsById(id)){
             throw new RuntimeException("No found user");
         }
         userRepository.deleteById(id);
     }
+
 }

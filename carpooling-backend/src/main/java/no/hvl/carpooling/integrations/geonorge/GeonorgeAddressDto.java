@@ -1,10 +1,10 @@
-package no.hvl.carpooling.service.dto;
+package no.hvl.carpooling.integrations.geonorge;
 
 /**
  * Minimal address representation for application/service use.
  * Keep integration-layer DTOs (Geonorge responses) separate from app DTOs.
  */
-public record AddressDto(
+public record GeonorgeAddressDto(
         String addressName,
         Integer number,
         String letter,

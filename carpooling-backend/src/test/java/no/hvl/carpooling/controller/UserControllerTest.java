@@ -1,7 +1,8 @@
 package no.hvl.carpooling.controller;
 
-import no.hvl.carpooling.model.User;
 import no.hvl.carpooling.service.JwtAuthFilter;
+import no.hvl.carpooling.api.controllers.UserController;
+import no.hvl.carpooling.persistence.entity.User;
 import no.hvl.carpooling.service.UserService;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
@@ -45,12 +46,12 @@ public class UserControllerTest {
     @Test
     void createUserSuccessfully() throws Exception{
         User user = new User();
-        user.setId(1L);
+        user.setId(1);
         user.setUsername("name");
         user.setEmail("email");
-        user.setPassword("password1");
+        user.setHashedPassword("password");
 
-        when(userService.createUser(any(User.class))).thenReturn(user);
+        when(userService.saveUser(any(User.class))).thenReturn(user);
 
         mockMvc.perform(post("/users").content(objectMapper.writeValueAsString(user)).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andExpect(jsonPath("$.id").value(1)).andExpect(jsonPath("$.username").value("name")).andExpect(jsonPath("$.email").value("email"));
     }
@@ -60,7 +61,7 @@ public class UserControllerTest {
         User user = new User();
         user.setUsername("");
         user.setEmail("");
-        user.setPassword("");
+        user.setHashedPassword("");
 
         mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(user))).andExpect(status().isBadRequest());
     }
@@ -68,19 +69,19 @@ public class UserControllerTest {
     @Test
     void getUserSuccessfully() throws Exception{
         User user = new User();
-        user.setId(1L);
+        user.setId(1);
         user.setUsername("name");
         user.setEmail("email");
-        user.setPassword("password");
+        user.setHashedPassword("password");
 
-        when(userService.getUserById(1L)).thenReturn(Optional.of(user));
+        when(userService.getUserById(1)).thenReturn(Optional.of(user));
 
         mockMvc.perform(get("/users/1")).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(1)).andExpect(jsonPath("$.username").value("name")).andExpect(jsonPath("$.email").value("email"));
     }
 
     @Test
     void getUserUnsuccessfully() throws Exception{
-        when(userService.getUserById(1L)).thenReturn(Optional.empty());
+        when(userService.getUserById(1)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/users/1")).andExpect(status().isNotFound());
     }
@@ -88,16 +89,16 @@ public class UserControllerTest {
     @Test
     void getAllUsersSuccessfully() throws Exception {
         User user = new User();
-        user.setId(1L);
+        user.setId(1);
         user.setUsername("name");
         user.setEmail("email");
-        user.setPassword("password");
+        user.setHashedPassword("password");
 
         User user2 = new User();
-        user2.setId(2L);
+        user2.setId(2);
         user2.setUsername("name2");
         user2.setEmail("email2");
-        user2.setPassword("password2");
+        user2.setHashedPassword("password2");
 
         when(userService.getAllUsers()).thenReturn(List.of(user, user2));
 
@@ -107,19 +108,19 @@ public class UserControllerTest {
     @Test
     void updateUserSuccessfully() throws Exception {
         User user = new User();
-        user.setId(1L);
+        user.setId(1);
         user.setUsername("name");
         user.setEmail("email");
-        user.setPassword("password");
+        user.setHashedPassword("password");
 
-        when(userService.updateUser(any(Long.class), any(User.class))).thenReturn(user);
+        when(userService.updateUser(any(Integer.class), any(User.class))).thenReturn(user);
 
         mockMvc.perform(put("/users/1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(user))).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(1)).andExpect(jsonPath("$.username").value("name")).andExpect(jsonPath("$.email").value("email"));
     }
 
     @Test
     void deleteUserSuccessfully() throws Exception{
-        doNothing().when(userService).deleteUser(1L);
+        doNothing().when(userService).deleteUser(1);
 
         mockMvc.perform(delete("/users/1")).andExpect(status().isNoContent());
     }

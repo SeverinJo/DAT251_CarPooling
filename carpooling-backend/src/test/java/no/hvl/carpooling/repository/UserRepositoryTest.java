@@ -1,10 +1,10 @@
 package no.hvl.carpooling.repository;
 
-import no.hvl.carpooling.model.User;
-import org.flywaydb.core.internal.jdbc.JdbcTemplate;
+import no.hvl.carpooling.persistence.entity.User;
+import no.hvl.carpooling.persistence.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
@@ -42,7 +42,7 @@ public class UserRepositoryTest {
 
     @Test
     void findUserById(){
-        Long id = saved.getId();
+        var id = saved.getId();
         Optional<User> user = userRepository.findById(id);
         assertTrue(user.isPresent());
         assertEquals("name", user.get().getUsername());
