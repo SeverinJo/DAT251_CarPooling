@@ -1,6 +1,6 @@
 package no.hvl.carpooling.model;
 
-import no.hvl.carpooling.persistence.entity.User;
+import no.hvl.carpooling.database.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
