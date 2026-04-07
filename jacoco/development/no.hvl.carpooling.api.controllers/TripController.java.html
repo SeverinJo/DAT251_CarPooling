@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TripController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">carpooling-backend</a> &gt; <a href="index.source.html" class="el_package">no.hvl.carpooling.api.controllers</a> &gt; <span class="el_source">TripController.java</span></div><h1>TripController.java</h1><pre class="source lang-java linenums">package no.hvl.carpooling.api.controllers;
+
+import no.hvl.carpooling.api.dto.AddressDto;
+import no.hvl.carpooling.service.TripService;
+import no.hvl.carpooling.api.dto.TripCreationRequest;
+import no.hvl.carpooling.api.dto.TripDto;
+import no.hvl.carpooling.persistence.entity.Address;
+import no.hvl.carpooling.persistence.entity.Trip;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/trips&quot;)
+public class TripController {
+
+    private final TripService tripService;
+
+    @Autowired
+<span class="fc" id="L23">    public TripController(TripService tripService) {</span>
+<span class="fc" id="L24">        this.tripService = tripService;</span>
+<span class="fc" id="L25">    }</span>
+
+    @PostMapping
+    public ResponseEntity&lt;TripDto&gt; create(@RequestBody TripCreationRequest request) {
+
+        // todo: get user principal from token
+
+<span class="nc" id="L32">        var trip = tripService.createTrip(</span>
+<span class="nc" id="L33">            request.startAddress(),</span>
+<span class="nc" id="L34">            request.destinationAddress(),</span>
+<span class="nc" id="L35">            request.departureTimeInIsoFormat(),</span>
+<span class="nc" id="L36">            request.seatsAvailable()</span>
+            // todo: give user principal to service (maybe just userId?)
+        );
+
+<span class="nc" id="L40">        var response = new TripDto(</span>
+<span class="nc" id="L41">            trip.getId(),</span>
+<span class="nc" id="L42">            trip.getDriver().getId(),</span>
+<span class="nc" id="L43">            trip.getDriver().getUsername(),</span>
+<span class="nc" id="L44">            map(trip.getOrigin()),</span>
+<span class="nc" id="L45">            map(trip.getDestination()),</span>
+<span class="nc" id="L46">            trip.getOriginMunicipality(),</span>
+<span class="nc" id="L47">            trip.getDepartureTime(),</span>
+<span class="nc" id="L48">            trip.getSeatsAvailable(),</span>
+<span class="nc" id="L49">            trip.getCreatedAt()</span>
+        );
+
+<span class="nc" id="L52">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
+    }
+
+    @GetMapping
+    public List&lt;TripDto&gt; getAvailableTripsByOrigin(@RequestParam String startAddress) {
+<span class="nc" id="L57">        var availableTrips = tripService.findAvailableTrips(startAddress);</span>
+<span class="nc" id="L58">        return map(availableTrips);</span>
+    }
+
+    private List&lt;TripDto&gt; map(List&lt;Trip&gt; trips) {
+<span class="nc bnc" id="L62" title="All 4 branches missed.">        if (trips == null || trips.isEmpty()) {</span>
+<span class="nc" id="L63">            return List.of();</span>
+        }
+
+<span class="nc" id="L66">        return trips.stream()</span>
+<span class="nc" id="L67">            .map(trip -&gt; new TripDto(</span>
+<span class="nc" id="L68">                trip.getId(),</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">                trip.getDriver() != null ? trip.getDriver().getId() : null,</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">                trip.getDriver() != null ? trip.getDriver().getUsername() : null,</span>
+<span class="nc" id="L71">                map(trip.getOrigin()),</span>
+<span class="nc" id="L72">                map(trip.getDestination()),</span>
+<span class="nc" id="L73">                trip.getOriginMunicipality(),</span>
+<span class="nc" id="L74">                trip.getDepartureTime(),</span>
+<span class="nc" id="L75">                trip.getSeatsAvailable(),</span>
+<span class="nc" id="L76">                trip.getCreatedAt()</span>
+            ))
+<span class="nc" id="L78">            .toList();</span>
+    }
+
+    private AddressDto map(Address address) {
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        if (address == null) {</span>
+<span class="nc" id="L83">            return null;</span>
+        }
+
+<span class="nc" id="L86">        return new AddressDto(</span>
+<span class="nc" id="L87">            address.getId(),</span>
+<span class="nc" id="L88">            address.getAddressName(),</span>
+<span class="nc" id="L89">            address.getNumber(),</span>
+<span class="nc" id="L90">            address.getLetter(),</span>
+<span class="nc" id="L91">            address.getMunicipality(),</span>
+<span class="nc" id="L92">            address.getCity(),</span>
+<span class="nc" id="L93">            address.getPostalCode(),</span>
+<span class="nc" id="L94">            address.getEpsg(),</span>
+<span class="nc" id="L95">            address.getLatitude(),</span>
+<span class="nc" id="L96">            address.getLongitude()</span>
+        );
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

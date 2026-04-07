@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TripService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">carpooling-backend</a> &gt; <a href="index.source.html" class="el_package">no.hvl.carpooling.service</a> &gt; <span class="el_source">TripService.java</span></div><h1>TripService.java</h1><pre class="source lang-java linenums">package no.hvl.carpooling.service;
+
+import jakarta.transaction.Transactional;
+import jakarta.validation.ValidationException;
+import no.hvl.carpooling.integrations.geonorge.GeonorgeAddressDto;
+import no.hvl.carpooling.persistence.entity.Trip;
+import no.hvl.carpooling.persistence.repository.TripRepository;
+import org.springframework.stereotype.Service;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import static jakarta.transaction.Transactional.TxType.REQUIRES_NEW;
+
+
+@Service
+public class TripService {
+
+    private static final int MIN_NUMBER_OF_AVAILABLE_SEATS = 1;
+    private static final int MAX_NUMBER_OF_AVAILABLE_SEATS = 6;
+
+    private final TripRepository tripRepository;
+    private final AddressService addressService;
+
+    public TripService(
+        TripRepository tripRepository,
+        AddressService addressService
+<span class="fc" id="L29">    ) {</span>
+<span class="fc" id="L30">        this.tripRepository = tripRepository;</span>
+<span class="fc" id="L31">        this.addressService = addressService;</span>
+<span class="fc" id="L32">    }</span>
+
+    @Transactional(value = REQUIRES_NEW)
+    public Trip createTrip (
+        String startAddress,
+        String destinationAddress,
+        ZonedDateTime departureTimeInIsoFormat,
+        Integer seatsAvailable
+        // todo: get user principal (or just UserId)
+    ) {
+        GeonorgeAddressDto start, end;
+        try {
+<span class="nc" id="L44">            start = addressService.search(startAddress).getFirst();</span>
+<span class="nc" id="L45">            end = addressService.search(destinationAddress).getFirst();</span>
+        }
+<span class="nc" id="L47">        catch (NoSuchElementException e) {</span>
+<span class="nc" id="L48">            throw new ValidationException(&quot;Either start or end address not found!&quot;);</span>
+<span class="nc" id="L49">        }</span>
+
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        if(departureTimeInIsoFormat.isBefore(ZonedDateTime.now())) {</span>
+<span class="nc" id="L52">            throw new ValidationException(&quot;You can not create a trip in the past!&quot;);</span>
+        }
+
+<span class="nc bnc" id="L55" title="All 4 branches missed.">        if(seatsAvailable &lt; MIN_NUMBER_OF_AVAILABLE_SEATS || seatsAvailable &gt; MAX_NUMBER_OF_AVAILABLE_SEATS) {</span>
+<span class="nc" id="L56">            throw new ValidationException(String.format(</span>
+                &quot;Only %d to %d passengers are allowed!&quot;,
+<span class="nc" id="L58">                MIN_NUMBER_OF_AVAILABLE_SEATS,</span>
+<span class="nc" id="L59">                MAX_NUMBER_OF_AVAILABLE_SEATS</span>
+            ));
+        }
+
+<span class="nc" id="L63">        var savedStartAddress = addressService.saveAddress(start);</span>
+<span class="nc" id="L64">        var savedEndAddress =  addressService.saveAddress(end);</span>
+
+<span class="nc" id="L66">        var trip = new Trip();</span>
+<span class="nc" id="L67">        trip.setOrigin(savedStartAddress);</span>
+<span class="nc" id="L68">        trip.setDestination(savedEndAddress);</span>
+        // trip.setDriver(); todo: get id from user principal
+<span class="nc" id="L70">        trip.setDepartureTime(departureTimeInIsoFormat.toLocalDateTime());</span>
+<span class="nc" id="L71">        trip.setSeatsAvailable(seatsAvailable);</span>
+<span class="nc" id="L72">        trip.setOriginMunicipality(savedStartAddress.getMunicipality());</span>
+
+<span class="nc" id="L74">        return tripRepository.save(trip);</span>
+    }
+
+    @Transactional
+    public List&lt;Trip&gt; findAvailableTrips(String startAddress) {
+        GeonorgeAddressDto start;
+        try {
+<span class="nc" id="L81">            start = addressService.search(startAddress).getFirst();</span>
+        }
+<span class="nc" id="L83">        catch (NoSuchElementException e) {</span>
+<span class="nc" id="L84">            throw new ValidationException(&quot;Start address not found!&quot;);</span>
+<span class="nc" id="L85">        }</span>
+
+<span class="nc" id="L87">        var municipality = start.municipality();</span>
+<span class="nc" id="L88">        return tripRepository.findAvailableTripsByOrigin(municipality);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>
