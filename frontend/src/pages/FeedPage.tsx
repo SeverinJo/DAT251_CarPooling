@@ -167,7 +167,6 @@ function FeedPage() {
             </Box>
         </Container>
     );
-    return <div>FeedPage</div>;
 }
 
 export default FeedPage;
