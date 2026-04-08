@@ -11,13 +11,13 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 
 const WEEKDAYS = [
-    { label: "Man", value: "monday" },
-    { label: "Tir", value: "tuesday" },
-    { label: "Ons", value: "wednesday" },
-    { label: "Tor", value: "thursday" },
-    { label: "Fre", value: "friday" },
-    { label: "Lør", value: "saturday" },
-    { label: "Søn", value: "sunday" },
+    { label: "Mon", value: "monday" },
+    { label: "Tue", value: "tuesday" },
+    { label: "Wed", value: "wednesday" },
+    { label: "Thu", value: "thursday" },
+    { label: "Fri", value: "friday" },
+    { label: "Sat", value: "saturday" },
+    { label: "Sun", value: "sunday" },
 ];
 
 function NewTripPage() {
@@ -34,8 +34,8 @@ function NewTripPage() {
     const isValid = () => {
         if (!tripType || !from || !to || !time) return false;
         if (tripType === "recurring" && (selectedDays.length === 0 || !duration)) return false;
-        if (tripType === "single" && !date) return false;
-        return true;
+        return !(tripType === "single" && !date);
+
     };
 
     const handleSubmit = () => {
@@ -197,8 +197,10 @@ function NewTripPage() {
                             value={date}
                             onChange={(e) => setDate(e.target.value)}
                             fullWidth
-                            slotProps={{ inputLabel: { shrink: true } }}
-                            inputProps={{ min: new Date().toISOString().split("T")[0] }}
+                            slotProps={{
+                                inputLabel: { shrink: true },
+                                htmlInput: { min: new Date().toISOString().split("T")[0] }
+                            }}
                         />
                     )}
 
