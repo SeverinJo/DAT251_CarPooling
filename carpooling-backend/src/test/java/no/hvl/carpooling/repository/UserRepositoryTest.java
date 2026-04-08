@@ -1,12 +1,12 @@
 package no.hvl.carpooling.repository;
 
-import no.hvl.carpooling.persistence.entity.User;
-import no.hvl.carpooling.persistence.repository.UserRepository;
+import no.hvl.carpooling.TestcontainersConfiguration;
+import no.hvl.carpooling.database.entity.User;
+import no.hvl.carpooling.database.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
 import java.util.List;
@@ -14,12 +14,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest(properties = {
-        "spring.flyway.enabled=false",
-        "spring.jpa.hibernate.ddl-auto=create-drop"
-})
-@Import(RepositoryTestcontainersConfiguration.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(TestcontainersConfiguration.class)
+@SpringBootTest
 public class UserRepositoryTest {
 
     @Autowired
@@ -30,6 +26,9 @@ public class UserRepositoryTest {
 
     @BeforeEach
     void setUp(){
+        userRepository.deleteAll();
+        userRepository.flush();
+
         user = new User("name", "email", "password");
         saved = userRepository.save(user);
     }

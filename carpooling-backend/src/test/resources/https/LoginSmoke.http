@@ -1,0 +1,31 @@
+### Login smoke (blackbox)
+@host = http://localhost:8080
+
+# AuthController expects `username` and `password` as request params.
+POST {{host}}/login?username=smoke&password=password123
+Accept: text/plain
+
+> {%
+  client.test("login returns 200", function () {
+    client.assert(response.status === 200, "Expected 200 OK");
+  });
+  client.test("token is returned", function () {
+    client.assert(!!response.body && response.body.length > 10, "Expected a non-empty token");
+  });
+  client.global.set("jwt", response.body);
+%}
+
+### Trips smoke (uses JWT from login)
+# Note: This endpoint calls Geonorge to resolve the municipality for `startAddress`.
+GET {{host}}/api/trips?startAddress=Bergen
+Authorization: Bearer {{jwt}}
+Accept: application/json
+
+> {%
+  client.test("trips endpoint returns 200", function () {
+    client.assert(response.status === 200, "Expected 200 OK");
+  });
+  client.test("response is a JSON array (possibly empty)", function () {
+    client.assert(Array.isArray(response.body), "Expected a JSON array");
+  });
+%}

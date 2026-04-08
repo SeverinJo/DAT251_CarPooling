@@ -1,5 +1,6 @@
 package no.hvl.carpooling.integrations.geonorge;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -12,7 +13,10 @@ public class GeonorgeAddressApi {
     private final RestTemplate restTemplate;
     private final String url;
 
-    public GeonorgeAddressApi(RestTemplate restTemplate, @Value("${carpooling.integrations.geonorge.url}") String url) {
+    public GeonorgeAddressApi(
+        @Qualifier("geonorgeRestTemplate") RestTemplate restTemplate,
+        @Value("${carpooling.integrations.geonorge.url}") String url
+    ) {
         this.restTemplate = restTemplate;
         if (url == null || url.isBlank()) {
             throw new IllegalStateException("Missing required property: carpooling.integrations.geonorge.url");

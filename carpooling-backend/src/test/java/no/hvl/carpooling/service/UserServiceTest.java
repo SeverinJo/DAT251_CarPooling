@@ -1,7 +1,8 @@
 package no.hvl.carpooling.service;
 
-import no.hvl.carpooling.persistence.entity.User;
-import no.hvl.carpooling.persistence.repository.UserRepository;
+import no.hvl.carpooling.database.entity.User;
+import no.hvl.carpooling.database.repository.UserRepository;
+import no.hvl.carpooling.service.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
