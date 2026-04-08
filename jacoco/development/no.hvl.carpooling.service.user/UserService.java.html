@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">carpooling-backend</a> &gt; <a href="index.source.html" class="el_package">no.hvl.carpooling.service.user</a> &gt; <span class="el_source">UserService.java</span></div><h1>UserService.java</h1><pre class="source lang-java linenums">package no.hvl.carpooling.service.user;
+
+import no.hvl.carpooling.database.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import jakarta.transaction.Transactional;
+import no.hvl.carpooling.database.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+import static jakarta.transaction.Transactional.TxType.REQUIRES_NEW;
+
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+<span class="fc" id="L22">    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {</span>
+<span class="fc" id="L23">        this.userRepository = userRepository;</span>
+<span class="fc" id="L24">        this.passwordEncoder = passwordEncoder;</span>
+<span class="fc" id="L25">    }</span>
+
+    @Transactional(REQUIRES_NEW)
+    public User saveUser(User user){
+<span class="fc" id="L29">        user.setHashedPassword(passwordEncoder.encode(user.getHashedPassword()));</span>
+<span class="fc" id="L30">        return userRepository.save(user);</span>
+    }
+
+    @Transactional
+    public List&lt;User&gt; getAllUsers(){
+<span class="fc" id="L35">        return userRepository.findAll();</span>
+    }
+
+    @Transactional
+    public Optional&lt;User&gt; getUserById(int id){
+<span class="fc" id="L40">        return userRepository.findById(id);</span>
+    }
+
+    @Transactional
+    public Optional&lt;User&gt; findByUsername(String username) {
+<span class="nc" id="L45">        return userRepository.findByUsername(username);</span>
+    }
+
+    @Transactional(REQUIRES_NEW)
+    public User updateUser(Integer id, User newUserDetails){
+<span class="fc" id="L50">        return userRepository.findById(id).map(currentUser -&gt; {</span>
+<span class="fc" id="L51">            currentUser.setUsername(newUserDetails.getUsername());</span>
+<span class="fc" id="L52">            currentUser.setEmail(newUserDetails.getEmail());</span>
+<span class="fc" id="L53">            return userRepository.save(currentUser);</span>
+<span class="fc" id="L54">        }).orElseThrow(() -&gt; new RuntimeException(&quot;No found user&quot;));</span>
+    }
+
+    @Transactional(REQUIRES_NEW)
+    public void deleteUser(Integer id){
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if(!userRepository.existsById(id)){</span>
+<span class="fc" id="L60">            throw new RuntimeException(&quot;No found user&quot;);</span>
+        }
+<span class="fc" id="L62">        userRepository.deleteById(id);</span>
+<span class="fc" id="L63">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

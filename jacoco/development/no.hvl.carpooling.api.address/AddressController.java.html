@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AddressController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">carpooling-backend</a> &gt; <a href="index.source.html" class="el_package">no.hvl.carpooling.api.address</a> &gt; <span class="el_source">AddressController.java</span></div><h1>AddressController.java</h1><pre class="source lang-java linenums">package no.hvl.carpooling.api.address;
+
+import no.hvl.carpooling.integrations.geonorge.GeonorgeAddress;
+import no.hvl.carpooling.service.address.AddressService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;api/address&quot;)
+public class AddressController {
+
+    private final AddressService addressService;
+
+<span class="fc" id="L20">    public AddressController(AddressService addressService) {</span>
+<span class="fc" id="L21">        this.addressService = addressService;</span>
+<span class="fc" id="L22">    }</span>
+
+    @GetMapping
+    public ResponseEntity&lt;List&lt;AddressResponse&gt;&gt; getAddresses(@RequestParam String address) {
+<span class="nc" id="L26">        var addressList = addressService.search(address);</span>
+<span class="nc" id="L27">        return ResponseEntity.ok(map(addressList));</span>
+    }
+
+    // Suggestion for later:
+    // todo: GET endpoint to return 5 latest start/origin addresses
+    // todo: GET endpoint to return 5 latest stop/destination addresses
+
+    private List&lt;AddressResponse&gt; map(List&lt;GeonorgeAddress&gt; addresses) {
+<span class="nc bnc" id="L35" title="All 2 branches missed.">        if (addresses == null) {</span>
+<span class="nc" id="L36">            return List.of();</span>
+        }
+
+<span class="nc" id="L39">        return addresses.stream()</span>
+<span class="nc" id="L40">            .map(a -&gt; new AddressResponse(</span>
+                null,
+<span class="nc" id="L42">                a.addressName(),</span>
+<span class="nc" id="L43">                a.number(),</span>
+<span class="nc" id="L44">                a.letter(),</span>
+<span class="nc" id="L45">                a.municipality(),</span>
+<span class="nc" id="L46">                a.city(),</span>
+<span class="nc" id="L47">                a.postalCode(),</span>
+<span class="nc" id="L48">                a.epsg(),</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">                a.latitude() != null ? BigDecimal.valueOf(a.latitude()) : null,</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">                a.longitude() != null ? BigDecimal.valueOf(a.longitude()) : null</span>
+            ))
+<span class="nc" id="L52">            .toList();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

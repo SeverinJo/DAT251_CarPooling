@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GeonorgeAddressApi.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">carpooling-backend</a> &gt; <a href="index.source.html" class="el_package">no.hvl.carpooling.integrations.geonorge</a> &gt; <span class="el_source">GeonorgeAddressApi.java</span></div><h1>GeonorgeAddressApi.java</h1><pre class="source lang-java linenums">package no.hvl.carpooling.integrations.geonorge;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -12,13 +13,16 @@ public class GeonorgeAddressApi {
     private final RestTemplate restTemplate;
     private final String url;
 
-<span class="fc" id="L15">    public GeonorgeAddressApi(RestTemplate restTemplate, @Value(&quot;${carpooling.integrations.geonorge.url}&quot;) String url) {</span>
-<span class="fc" id="L16">        this.restTemplate = restTemplate;</span>
-<span class="pc bpc" id="L17" title="2 of 4 branches missed.">        if (url == null || url.isBlank()) {</span>
-<span class="nc" id="L18">            throw new IllegalStateException(&quot;Missing required property: carpooling.integrations.geonorge.url&quot;);</span>
+    public GeonorgeAddressApi(
+        @Qualifier(&quot;geonorgeRestTemplate&quot;) RestTemplate restTemplate,
+        @Value(&quot;${carpooling.integrations.geonorge.url}&quot;) String url
+<span class="fc" id="L19">    ) {</span>
+<span class="fc" id="L20">        this.restTemplate = restTemplate;</span>
+<span class="pc bpc" id="L21" title="2 of 4 branches missed.">        if (url == null || url.isBlank()) {</span>
+<span class="nc" id="L22">            throw new IllegalStateException(&quot;Missing required property: carpooling.integrations.geonorge.url&quot;);</span>
         }
-<span class="fc" id="L20">        this.url = url;</span>
-<span class="fc" id="L21">    }</span>
+<span class="fc" id="L24">        this.url = url;</span>
+<span class="fc" id="L25">    }</span>
 
     /**
      * Makes a call to Geonorge's search endpoint to search among valid address in Norway.
@@ -29,20 +33,20 @@ public class GeonorgeAddressApi {
      */
     public AddressSearchResponse search(String searchQuery) throws GeonorgeNotAvailableException {
         try {
-<span class="fc" id="L32">            var uri = UriComponentsBuilder</span>
-<span class="fc" id="L33">                .fromUriString(url)</span>
-<span class="fc" id="L34">                .pathSegment(&quot;sok&quot;)</span>
-<span class="fc" id="L35">                .queryParam(&quot;sok&quot;, &quot;{searchQuery}&quot;)</span>
-<span class="fc" id="L36">                .queryParam(&quot;treffPerSide&quot;, 10)</span>
-<span class="fc" id="L37">                .queryParam(&quot;side&quot;, 0)</span>
-<span class="fc" id="L38">                .buildAndExpand(searchQuery)</span>
-<span class="fc" id="L39">                .toUri();</span>
+<span class="fc" id="L36">            var uri = UriComponentsBuilder</span>
+<span class="fc" id="L37">                .fromUriString(url)</span>
+<span class="fc" id="L38">                .pathSegment(&quot;sok&quot;)</span>
+<span class="fc" id="L39">                .queryParam(&quot;sok&quot;, &quot;{searchQuery}&quot;)</span>
+<span class="fc" id="L40">                .queryParam(&quot;treffPerSide&quot;, 10)</span>
+<span class="fc" id="L41">                .queryParam(&quot;side&quot;, 0)</span>
+<span class="fc" id="L42">                .buildAndExpand(searchQuery)</span>
+<span class="fc" id="L43">                .toUri();</span>
 
-<span class="fc" id="L41">            var response = restTemplate.getForEntity(uri, AddressSearchResponse.class);</span>
-<span class="fc" id="L42">            return response.getBody();</span>
+<span class="fc" id="L45">            var response = restTemplate.getForEntity(uri, AddressSearchResponse.class);</span>
+<span class="fc" id="L46">            return response.getBody();</span>
         }
-<span class="nc" id="L44">        catch (RestClientException e) {</span>
-<span class="nc" id="L45">            throw new GeonorgeNotAvailableException(&quot;Geonorge call failed&quot;, e);</span>
+<span class="nc" id="L48">        catch (RestClientException e) {</span>
+<span class="nc" id="L49">            throw new GeonorgeNotAvailableException(&quot;Geonorge call failed&quot;, e);</span>
         }
     }
 
