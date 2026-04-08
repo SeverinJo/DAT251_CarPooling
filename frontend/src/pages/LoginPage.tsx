@@ -14,11 +14,11 @@ export default function LoginPage() {
                     <Paper elevation={3} sx={{ p: 4, width: "100%", borderRadius: 3 }}>
                         <Stack spacing={2}>
                             <Typography variant="h4" component="h1">
-                                Logg in
+                                Login
                             </Typography>
 
                             <Typography variant="body2" color="text.secondary">
-                                Provide userinformation.
+                                Provide user information.
                             </Typography>
 
                             <TextField

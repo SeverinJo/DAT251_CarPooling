@@ -39,8 +39,8 @@ const feedSubItems = [
 ];
 
 const newTripSubItems = [
-    { label: "Find a Trip", icon: <SearchIcon />, path: "/new-trip/search" },
-    { label: "Offer a Seat", icon: <AirlineSeatReclineNormalIcon />, path: "/new-trip/offer" },
+    { label: "Find a Trip", icon: <SearchIcon />, path: "/trip/search" },
+    { label: "Offer a Seat", icon: <AirlineSeatReclineNormalIcon />, path: "/trip/offer" },
 ];
 
 interface LayoutProps {
@@ -70,8 +70,8 @@ export default function Layout({ children }: LayoutProps) {
 
     return (
         <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column", bgcolor: "background.default" }}>
-            <AppBar position="sticky" elevation={1} sx={{ bgcolor: "background.paper", color: "text.primary" }}>
-                <Toolbar sx={{ width: "100%", px: { xs: 1, md: 3 } }}>
+            <AppBar position="sticky" elevation={1} sx={{ bgcolor: "background.paper", color: "text.primary" }} >
+                <Toolbar sx={{ width: "100%", px: { xs: 1, md: 3 }} }>
                     <Typography
                         variant="h6"
                         sx={{ fontWeight: 700, color: "primary.main", mr: 4, cursor: "pointer" }}
@@ -92,8 +92,7 @@ export default function Layout({ children }: LayoutProps) {
                                 <Button
                                     startIcon={<GroupIcon />}
                                     sx={buttonSx("/feed")}
-                                    onClick={() => navigate("/feed")}
-                                    onMouseEnter={(e: MouseEvent<HTMLElement>) => { setFeedAnchor(e.currentTarget); setTripAnchor(null); }}
+                                    onClick={(e: MouseEvent<HTMLElement>) => { setFeedAnchor(e.currentTarget); setTripAnchor(null); }}
                                 >
                                     Feed
                                 </Button>
@@ -126,8 +125,7 @@ export default function Layout({ children }: LayoutProps) {
                                 <Button
                                     startIcon={<AddCircleOutlineIcon />}
                                     sx={buttonSx("/trip")}
-                                    onClick={() => navigate("/trip")}
-                                    onMouseEnter={(e: MouseEvent<HTMLElement>) => { setTripAnchor(e.currentTarget); setFeedAnchor(null); }}
+                                    onClick={(e: MouseEvent<HTMLElement>) => { setTripAnchor(e.currentTarget); setFeedAnchor(null); }}
                                 >
                                     New Trip
                                 </Button>
