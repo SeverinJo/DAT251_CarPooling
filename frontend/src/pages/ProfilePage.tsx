@@ -36,6 +36,11 @@ function ProfilePage() {
                         <Typography variant="body2" color="text.secondary">
                             Rating: {currentUser.rating}
                         </Typography>
+                        {currentUser.bio && (
+                            <Typography variant="body1" color="text.secondary" sx={{ textAlign: "center" }}>
+                                {currentUser.bio}
+                            </Typography>
+                        )}
                         {loading ? (
                             <Typography variant="body2">Loading bookings...</Typography>
                         ) : (
