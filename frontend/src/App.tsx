@@ -10,6 +10,7 @@ import ChatPage from "./pages/ChatPage";
 import NewTripPage from "./pages/NewTripPage.tsx";
 
 import ProfilePage from "./pages/ProfilePage";
+import MyCarpoolersPage from "./pages/MyCarpoolersPage.tsx";
 
 const theme = createTheme({
     palette: {
@@ -36,8 +37,8 @@ function App() {
                 <Layout>
                     <Routes>
                         <Route path="/" element={<HomePage />} />
-                        <Route path="/feed/carpoolers" element={<FeedPage />} />
-                        <Route path="/feed/groups" element={<HomePage />} />
+                        <Route path="/feed/carpoolers" element={<MyCarpoolersPage />} />
+                        <Route path="/feed/groups" element={<FeedPage />} />
                         <Route path="/feed/discover" element={<FeedPage />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/trip/search" element={<TripPlanningPage />} />
