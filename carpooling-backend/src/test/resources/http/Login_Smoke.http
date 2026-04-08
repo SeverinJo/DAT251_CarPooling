@@ -2,7 +2,7 @@
 @host = http://localhost:8080
 
 # AuthController expects `username` and `password` as request params.
-POST {{host}}/login?username=smoke&password=password123
+POST {{host}}/login?username=alice&password=password123
 Accept: text/plain
 
 > {%

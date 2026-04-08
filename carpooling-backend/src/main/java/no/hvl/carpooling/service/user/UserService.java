@@ -1,5 +1,6 @@
 package no.hvl.carpooling.service.user;
 
+import no.hvl.carpooling.api.auth.CreateUserRequest;
 import no.hvl.carpooling.database.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import jakarta.transaction.Transactional;
@@ -30,13 +31,20 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional(REQUIRES_NEW)
+    public void saveUser(CreateUserRequest createUserRequest) {
+        User user = new User(createUserRequest.username(), createUserRequest.email(), createUserRequest.password());
+        user.setHashedPassword(passwordEncoder.encode(user.getHashedPassword()));
+        userRepository.save(user);
+    }
+
     @Transactional
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
     @Transactional
-    public Optional<User> getUserById(int id){
+    public Optional<User> getUserById(int id) {
         return userRepository.findById(id);
     }
 
@@ -46,7 +54,7 @@ public class UserService {
     }
 
     @Transactional(REQUIRES_NEW)
-    public User updateUser(Integer id, User newUserDetails){
+    public User updateUser(Integer id, User newUserDetails) {
         return userRepository.findById(id).map(currentUser -> {
             currentUser.setUsername(newUserDetails.getUsername());
             currentUser.setEmail(newUserDetails.getEmail());
@@ -55,8 +63,8 @@ public class UserService {
     }
 
     @Transactional(REQUIRES_NEW)
-    public void deleteUser(Integer id){
-        if(!userRepository.existsById(id)){
+    public void deleteUser(Integer id) {
+        if(!userRepository.existsById(id)) {
             throw new RuntimeException("No found user");
         }
         userRepository.deleteById(id);
