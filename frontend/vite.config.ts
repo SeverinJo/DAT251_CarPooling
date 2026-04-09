@@ -7,8 +7,18 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://localhost:8080',
-      '/login': 'http://localhost:8080',
-      '/register': 'http://localhost:8080',
+      '/login': {
+        target: 'http://localhost:8080',
+        bypass(req) {
+          if (req.headers.accept?.includes('text/html')) return req.url;
+        }
+      },
+      '/register': {
+        target: 'http://localhost:8080',
+        bypass(req) {
+          if (req.headers.accept?.includes('text/html')) return req.url;
+        }
+      },
     }
   }
 })
