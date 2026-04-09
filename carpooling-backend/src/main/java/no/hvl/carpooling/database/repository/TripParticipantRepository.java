@@ -22,6 +22,9 @@ public interface TripParticipantRepository extends JpaRepository<TripParticipant
         select tp
         from TripParticipant tp
         join fetch tp.trip t
+        join fetch t.driver
+        join fetch t.origin
+        join fetch t.destination
         where tp.user.id = :userId
           and t.departureTime < :cutoff
         order by t.departureTime desc
@@ -35,6 +38,9 @@ public interface TripParticipantRepository extends JpaRepository<TripParticipant
         select tp
         from TripParticipant tp
         join fetch tp.trip t
+        join fetch t.driver
+        join fetch t.origin
+        join fetch t.destination
         where tp.user.id = :userId
           and t.departureTime >= :cutoff
         order by t.departureTime asc
@@ -43,4 +49,13 @@ public interface TripParticipantRepository extends JpaRepository<TripParticipant
         @Param("userId") Integer userId,
         @Param("cutoff") LocalDateTime cutoff
     );
+
+    @Query("""
+        select tp
+        from TripParticipant tp
+        join fetch tp.user
+        where tp.trip.id = :tripId
+        order by tp.requestedAt asc
+        """)
+    List<TripParticipant> findAllWithUserByTripId(@Param("tripId") Integer tripId);
 }

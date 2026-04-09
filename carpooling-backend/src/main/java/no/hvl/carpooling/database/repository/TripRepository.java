@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TripRepository extends JpaRepository<Trip, Integer> {
@@ -29,5 +30,35 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
         nativeQuery = true
     )
     List<Trip> findAvailableTripsByOrigin(@Param("originMunicipality") String originMunicipality);
+
+    @Query("""
+        select t
+        from Trip t
+        join fetch t.driver
+        join fetch t.origin
+        join fetch t.destination
+        where t.driver.id = :driverId
+          and t.departureTime < :cutoff
+        order by t.departureTime desc
+        """)
+    List<Trip> findAllWithDetailsByDriverIdAndDepartureTimeBefore(
+        @Param("driverId") Integer driverId,
+        @Param("cutoff") LocalDateTime cutoff
+    );
+
+    @Query("""
+        select t
+        from Trip t
+        join fetch t.driver
+        join fetch t.origin
+        join fetch t.destination
+        where t.driver.id = :driverId
+          and t.departureTime >= :cutoff
+        order by t.departureTime asc
+        """)
+    List<Trip> findAllWithDetailsByDriverIdAndDepartureTimeAfterOrEqual(
+        @Param("driverId") Integer driverId,
+        @Param("cutoff") LocalDateTime cutoff
+    );
 
 }

@@ -7,7 +7,8 @@ export const currentUser: User = {
     name: "Severin",
     email: "severin@example.com",
     rating: 4.0,
-    avatar: profilePic
+    avatar: profilePic,
+    bio: "Loves road trips and sustainable travel. Always up for a good carpool!"
 };
 
 // Fake trip results — what you'd get back from GET /api/trips

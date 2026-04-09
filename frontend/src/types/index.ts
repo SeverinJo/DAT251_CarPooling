@@ -5,6 +5,7 @@ export interface User {
     rating: number;
     vehicle?: Vehicle;
     avatar?: string;
+    bio?: string;
 }
 
 export interface Vehicle {
