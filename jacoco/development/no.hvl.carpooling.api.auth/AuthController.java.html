@@ -53,12 +53,9 @@ public class AuthController {
     }
 
     @PostMapping(&quot;/register&quot;)
-    public ResponseEntity&lt;User&gt; createUser(@Valid @RequestBody User user){
-<span class="nc" id="L57">        User createdUser = userService.saveUser(user);</span>
-
-        // todo: return an user DTO without password hash (high vulnerability)
-//        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-<span class="nc" id="L61">        return ResponseEntity.status(HttpStatus.CREATED).build();</span>
+    public ResponseEntity&lt;Void&gt; createUser(@Valid @RequestBody CreateUserRequest createUserRequest){
+<span class="nc" id="L57">        userService.saveUser(createUserRequest);</span>
+<span class="nc" id="L58">        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

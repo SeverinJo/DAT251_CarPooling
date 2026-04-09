@@ -36,7 +36,7 @@ public class SecurityConfig {
 <span class="fc" id="L36">                .sessionManagement(sess -&gt; sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))</span>
 <span class="fc" id="L37">                .authorizeHttpRequests(auth -&gt; auth</span>
 <span class="fc" id="L38">                        .requestMatchers(HttpMethod.POST, &quot;/login&quot;).permitAll()</span>
-<span class="fc" id="L39">                        .requestMatchers(HttpMethod.POST, &quot;/users&quot;).permitAll()</span>
+<span class="fc" id="L39">                        .requestMatchers(HttpMethod.POST, &quot;/register&quot;).permitAll()</span>
 <span class="fc" id="L40">                        .requestMatchers(</span>
                                 &quot;/swagger-ui.html&quot;,
                                 &quot;/swagger-ui/**&quot;,

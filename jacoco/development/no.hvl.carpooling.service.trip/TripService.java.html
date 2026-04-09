@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TripService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">carpooling-backend</a> &gt; <a href="index.source.html" class="el_package">no.hvl.carpooling.service.trip</a> &gt; <span class="el_source">TripService.java</span></div><h1>TripService.java</h1><pre class="source lang-java linenums">package no.hvl.carpooling.service.trip;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.ValidationException;
 import no.hvl.carpooling.integrations.geonorge.GeonorgeAddress;
 import no.hvl.carpooling.database.entity.Trip;
 import no.hvl.carpooling.database.entity.TripParticipant;
@@ -9,6 +8,7 @@ import no.hvl.carpooling.database.entity.TripParticipantStatus;
 import no.hvl.carpooling.database.entity.User;
 import no.hvl.carpooling.database.repository.TripParticipantRepository;
 import no.hvl.carpooling.database.repository.TripRepository;
+import no.hvl.carpooling.exceptions.ValidationException;
 import no.hvl.carpooling.service.address.AddressService;
 import org.springframework.stereotype.Service;
 
@@ -100,147 +100,212 @@ public class TripService {
 <span class="nc" id="L100">        var trip = tripRepository.findById(tripId)</span>
 <span class="nc" id="L101">            .orElseThrow(() -&gt; new ValidationException(&quot;Trip not found&quot;));</span>
 
-<span class="nc bnc" id="L103" title="All 4 branches missed.">        if (trip.getDriver() != null &amp;&amp; user.getId().equals(trip.getDriver().getId())) {</span>
-<span class="nc" id="L104">            throw new ValidationException(&quot;Trip owner can not be added as a participant&quot;);</span>
+<span class="nc bnc" id="L103" title="All 4 branches missed.">        if (trip.getDepartureTime() != null &amp;&amp; trip.getDepartureTime().isBefore(LocalDateTime.now())) {</span>
+<span class="nc" id="L104">            throw new ValidationException(&quot;You can not participate in a trip in the past!&quot;);</span>
         }
 
-<span class="nc" id="L107">        var existing = tripParticipantRepository.findByTripIdAndUserId(tripId, user.getId());</span>
-<span class="nc bnc" id="L108" title="All 2 branches missed.">        if (existing.isPresent()) {</span>
-<span class="nc" id="L109">            throw new ValidationException(&quot;User is already a participant (or has a pending request) for this trip&quot;);</span>
+<span class="nc bnc" id="L107" title="All 4 branches missed.">        if (trip.getDriver() != null &amp;&amp; user.getId().equals(trip.getDriver().getId())) {</span>
+<span class="nc" id="L108">            throw new ValidationException(&quot;Trip owner can not be added as a participant&quot;);</span>
         }
 
-<span class="nc" id="L112">        var participant = new TripParticipant();</span>
-<span class="nc" id="L113">        participant.setTrip(trip);</span>
-<span class="nc" id="L114">        participant.setUser(user);</span>
-<span class="nc" id="L115">        participant.setStatus(TripParticipantStatus.PENDING);</span>
+<span class="nc" id="L111">        var existing = tripParticipantRepository.findByTripIdAndUserId(tripId, user.getId());</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        if (existing.isPresent()) {</span>
+<span class="nc" id="L113">            throw new ValidationException(&quot;User is already a participant (or has a pending request) for this trip&quot;);</span>
+        }
 
-<span class="nc" id="L117">        return tripParticipantRepository.save(participant);</span>
+<span class="nc" id="L116">        var approvedCount = tripParticipantRepository.countByTripIdAndStatus(tripId, TripParticipantStatus.APPROVED);</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        if (approvedCount &gt;= trip.getSeatsAvailable()) {</span>
+<span class="nc" id="L118">            throw new ValidationException(&quot;No available seats left for this trip&quot;);</span>
+        }
+
+<span class="nc" id="L121">        var participant = new TripParticipant();</span>
+<span class="nc" id="L122">        participant.setTrip(trip);</span>
+<span class="nc" id="L123">        participant.setUser(user);</span>
+<span class="nc" id="L124">        participant.setStatus(TripParticipantStatus.PENDING);</span>
+
+<span class="nc" id="L126">        return tripParticipantRepository.save(participant);</span>
     }
 
     @Transactional
     public List&lt;TripParticipationTuple&gt; getMyParticipations(User user, TripParticipationTimeFilter timeFilter) {
-<span class="nc bnc" id="L122" title="All 4 branches missed.">        if (user == null || user.getId() == null) {</span>
-<span class="nc" id="L123">            throw new ValidationException(&quot;A valid user must be provided&quot;);</span>
+<span class="nc bnc" id="L131" title="All 4 branches missed.">        if (user == null || user.getId() == null) {</span>
+<span class="nc" id="L132">            throw new ValidationException(&quot;A valid user must be provided&quot;);</span>
         }
-<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (timeFilter == null) {</span>
-<span class="nc" id="L126">            throw new ValidationException(&quot;A valid timeFilter must be provided&quot;);</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        if (timeFilter == null) {</span>
+<span class="nc" id="L135">            throw new ValidationException(&quot;A valid timeFilter must be provided&quot;);</span>
         }
 
-<span class="nc" id="L129">        var now = LocalDateTime.now();</span>
-<span class="nc bnc" id="L130" title="All 3 branches missed.">        List&lt;TripParticipant&gt; participations = switch (timeFilter) {</span>
-<span class="nc" id="L131">            case HISTORICAL -&gt; tripParticipantRepository.findAllWithTripByUserIdAndDepartureTimeBefore(user.getId(), now);</span>
-<span class="nc" id="L132">            case UPCOMING -&gt; tripParticipantRepository.findAllWithTripByUserIdAndDepartureTimeAfterOrEqual(user.getId(), now);</span>
+<span class="nc" id="L138">        var now = LocalDateTime.now();</span>
+<span class="nc bnc" id="L139" title="All 3 branches missed.">        List&lt;TripParticipant&gt; participations = switch (timeFilter) {</span>
+<span class="nc" id="L140">            case HISTORICAL -&gt; tripParticipantRepository.findAllWithTripByUserIdAndDepartureTimeBefore(user.getId(), now);</span>
+<span class="nc" id="L141">            case UPCOMING -&gt; tripParticipantRepository.findAllWithTripByUserIdAndDepartureTimeAfterOrEqual(user.getId(), now);</span>
             case ALL -&gt; {
-<span class="nc" id="L134">                var upcoming = tripParticipantRepository.findAllWithTripByUserIdAndDepartureTimeAfterOrEqual(user.getId(), now);</span>
-<span class="nc" id="L135">                var historical = tripParticipantRepository.findAllWithTripByUserIdAndDepartureTimeBefore(user.getId(), now);</span>
+<span class="nc" id="L143">                var upcoming = tripParticipantRepository.findAllWithTripByUserIdAndDepartureTimeAfterOrEqual(user.getId(), now);</span>
+<span class="nc" id="L144">                var historical = tripParticipantRepository.findAllWithTripByUserIdAndDepartureTimeBefore(user.getId(), now);</span>
 
-<span class="nc" id="L137">                var all = new ArrayList&lt;TripParticipant&gt;(</span>
-<span class="nc bnc" id="L138" title="All 4 branches missed.">                    (upcoming != null ? upcoming.size() : 0) + (historical != null ? historical.size() : 0)</span>
+<span class="nc" id="L146">                var all = new ArrayList&lt;TripParticipant&gt;(</span>
+<span class="nc bnc" id="L147" title="All 4 branches missed.">                    (upcoming != null ? upcoming.size() : 0) + (historical != null ? historical.size() : 0)</span>
                 );
-<span class="nc bnc" id="L140" title="All 4 branches missed.">                if (upcoming != null &amp;&amp; !upcoming.isEmpty()) {</span>
-<span class="nc" id="L141">                    all.addAll(upcoming);</span>
+<span class="nc bnc" id="L149" title="All 4 branches missed.">                if (upcoming != null &amp;&amp; !upcoming.isEmpty()) {</span>
+<span class="nc" id="L150">                    all.addAll(upcoming);</span>
                 }
-<span class="nc bnc" id="L143" title="All 4 branches missed.">                if (historical != null &amp;&amp; !historical.isEmpty()) {</span>
-<span class="nc" id="L144">                    all.addAll(historical);</span>
+<span class="nc bnc" id="L152" title="All 4 branches missed.">                if (historical != null &amp;&amp; !historical.isEmpty()) {</span>
+<span class="nc" id="L153">                    all.addAll(historical);</span>
                 }
-<span class="nc" id="L146">                yield all;</span>
+<span class="nc" id="L155">                yield all;</span>
             }
         };
 
-<span class="nc bnc" id="L150" title="All 4 branches missed.">        if (participations == null || participations.isEmpty()) {</span>
-<span class="nc" id="L151">            return List.of();</span>
+<span class="nc bnc" id="L159" title="All 4 branches missed.">        if (participations == null || participations.isEmpty()) {</span>
+<span class="nc" id="L160">            return List.of();</span>
         }
 
-<span class="nc" id="L154">        return participations.stream()</span>
-<span class="nc" id="L155">            .map(tp -&gt; new TripParticipationTuple(tp.getTrip(), tp))</span>
-<span class="nc" id="L156">            .toList();</span>
+<span class="nc" id="L163">        return participations.stream()</span>
+<span class="nc" id="L164">            .map(tp -&gt; new TripParticipationTuple(tp.getTrip(), tp))</span>
+<span class="nc" id="L165">            .toList();</span>
+    }
+
+    @Transactional
+    public List&lt;Trip&gt; getMyTripsAsDriver(User user, TripParticipationTimeFilter timeFilter) {
+<span class="nc bnc" id="L170" title="All 4 branches missed.">        if (user == null || user.getId() == null) {</span>
+<span class="nc" id="L171">            throw new ValidationException(&quot;A valid user must be provided&quot;);</span>
+        }
+<span class="nc bnc" id="L173" title="All 2 branches missed.">        if (timeFilter == null) {</span>
+<span class="nc" id="L174">            throw new ValidationException(&quot;A valid timeFilter must be provided&quot;);</span>
+        }
+
+<span class="nc" id="L177">        var now = LocalDateTime.now();</span>
+<span class="nc bnc" id="L178" title="All 3 branches missed.">        return switch (timeFilter) {</span>
+<span class="nc" id="L179">            case HISTORICAL -&gt; tripRepository.findAllWithDetailsByDriverIdAndDepartureTimeBefore(user.getId(), now);</span>
+<span class="nc" id="L180">            case UPCOMING -&gt; tripRepository.findAllWithDetailsByDriverIdAndDepartureTimeAfterOrEqual(user.getId(), now);</span>
+            case ALL -&gt; {
+<span class="nc" id="L182">                var upcoming = tripRepository.findAllWithDetailsByDriverIdAndDepartureTimeAfterOrEqual(user.getId(), now);</span>
+<span class="nc" id="L183">                var historical = tripRepository.findAllWithDetailsByDriverIdAndDepartureTimeBefore(user.getId(), now);</span>
+
+<span class="nc" id="L185">                var all = new ArrayList&lt;Trip&gt;(</span>
+<span class="nc bnc" id="L186" title="All 4 branches missed.">                    (upcoming != null ? upcoming.size() : 0) + (historical != null ? historical.size() : 0)</span>
+                );
+<span class="nc bnc" id="L188" title="All 4 branches missed.">                if (upcoming != null &amp;&amp; !upcoming.isEmpty()) {</span>
+<span class="nc" id="L189">                    all.addAll(upcoming);</span>
+                }
+<span class="nc bnc" id="L191" title="All 4 branches missed.">                if (historical != null &amp;&amp; !historical.isEmpty()) {</span>
+<span class="nc" id="L192">                    all.addAll(historical);</span>
+                }
+<span class="nc" id="L194">                yield all;</span>
+            }
+        };
     }
 
     @Transactional(value = REQUIRES_NEW)
     public TripParticipant setParticipantStatus(Integer tripParticipantId, TripParticipantStatus newStatus, User user) {
-<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (tripParticipantId == null) {</span>
-<span class="nc" id="L162">            throw new ValidationException(&quot;A valid tripParticipantId must be provided&quot;);</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">        if (tripParticipantId == null) {</span>
+<span class="nc" id="L202">            throw new ValidationException(&quot;A valid tripParticipantId must be provided&quot;);</span>
         }
 
-<span class="nc bnc" id="L165" title="All 4 branches missed.">        if (newStatus == null || newStatus == TripParticipantStatus.PENDING) {</span>
-<span class="nc" id="L166">            throw new ValidationException(&quot;Status must be APPROVED or REJECTED&quot;);</span>
+<span class="nc bnc" id="L205" title="All 4 branches missed.">        if (newStatus == null || newStatus == TripParticipantStatus.PENDING) {</span>
+<span class="nc" id="L206">            throw new ValidationException(&quot;Status must be APPROVED or REJECTED&quot;);</span>
         }
 
-<span class="nc bnc" id="L169" title="All 4 branches missed.">        if (user == null || user.getId() == null) {</span>
-<span class="nc" id="L170">            throw new ValidationException(&quot;A valid user must be provided&quot;);</span>
+<span class="nc bnc" id="L209" title="All 4 branches missed.">        if (user == null || user.getId() == null) {</span>
+<span class="nc" id="L210">            throw new ValidationException(&quot;A valid user must be provided&quot;);</span>
         }
 
-<span class="nc" id="L173">        var participant = tripParticipantRepository.findById(tripParticipantId)</span>
-<span class="nc" id="L174">            .orElseThrow(() -&gt; new ValidationException(&quot;Trip participant not found&quot;));</span>
+<span class="nc" id="L213">        var participant = tripParticipantRepository.findById(tripParticipantId)</span>
+<span class="nc" id="L214">            .orElseThrow(() -&gt; new ValidationException(&quot;Trip participant not found&quot;));</span>
 
-<span class="nc" id="L176">        var trip = participant.getTrip();</span>
-<span class="nc bnc" id="L177" title="All 6 branches missed.">        if (trip == null || trip.getDriver() == null || trip.getDriver().getId() == null) {</span>
-<span class="nc" id="L178">            throw new ValidationException(&quot;Trip owner not found for participant&quot;);</span>
+<span class="nc" id="L216">        var trip = participant.getTrip();</span>
+<span class="nc bnc" id="L217" title="All 6 branches missed.">        if (trip == null || trip.getDriver() == null || trip.getDriver().getId() == null) {</span>
+<span class="nc" id="L218">            throw new ValidationException(&quot;Trip owner not found for participant&quot;);</span>
         }
 
-<span class="nc bnc" id="L181" title="All 2 branches missed.">        if (!user.getId().equals(trip.getDriver().getId())) {</span>
-<span class="nc" id="L182">            throw new ValidationException(&quot;Only the trip owner can approve or reject participants&quot;);</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">        if (!user.getId().equals(trip.getDriver().getId())) {</span>
+<span class="nc" id="L222">            throw new ValidationException(&quot;Only the trip owner can approve or reject participants&quot;);</span>
         }
 
-<span class="nc bnc" id="L185" title="All 2 branches missed.">        if (participant.getStatus() != TripParticipantStatus.PENDING) {</span>
-<span class="nc" id="L186">            throw new ValidationException(&quot;Only pending participation requests can be approved or rejected&quot;);</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">        if (participant.getStatus() != TripParticipantStatus.PENDING) {</span>
+<span class="nc" id="L226">            throw new ValidationException(&quot;Only pending participation requests can be approved or rejected&quot;);</span>
         }
 
-<span class="nc bnc" id="L189" title="All 2 branches missed.">        if (newStatus == TripParticipantStatus.APPROVED) {</span>
-<span class="nc" id="L190">            var approvedCount = tripParticipantRepository.countByTripIdAndStatus(</span>
-<span class="nc" id="L191">                trip.getId(),</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">        if (newStatus == TripParticipantStatus.APPROVED) {</span>
+<span class="nc" id="L230">            var approvedCount = tripParticipantRepository.countByTripIdAndStatus(</span>
+<span class="nc" id="L231">                trip.getId(),</span>
                 TripParticipantStatus.APPROVED
             );
-<span class="nc bnc" id="L194" title="All 2 branches missed.">            if (approvedCount &gt;= trip.getSeatsAvailable()) {</span>
-<span class="nc" id="L195">                throw new ValidationException(&quot;No available seats left for this trip&quot;);</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">            if (approvedCount &gt;= trip.getSeatsAvailable()) {</span>
+<span class="nc" id="L235">                throw new ValidationException(&quot;No available seats left for this trip&quot;);</span>
             }
         }
 
-<span class="nc" id="L199">        participant.setStatus(newStatus);</span>
-<span class="nc" id="L200">        participant.setUpdatedAt(LocalDateTime.now());</span>
-<span class="nc" id="L201">        return tripParticipantRepository.save(participant);</span>
+<span class="nc" id="L239">        participant.setStatus(newStatus);</span>
+<span class="nc" id="L240">        participant.setUpdatedAt(LocalDateTime.now());</span>
+<span class="nc" id="L241">        return tripParticipantRepository.save(participant);</span>
     }
 
     @Transactional
     public List&lt;TripParticipant&gt; getParticipantsByStatus(Integer tripId, TripParticipantStatus status, User user) {
-<span class="nc bnc" id="L206" title="All 2 branches missed.">        if (tripId == null) {</span>
-<span class="nc" id="L207">            throw new ValidationException(&quot;A valid tripId must be provided&quot;);</span>
+<span class="nc bnc" id="L246" title="All 2 branches missed.">        if (tripId == null) {</span>
+<span class="nc" id="L247">            throw new ValidationException(&quot;A valid tripId must be provided&quot;);</span>
         }
 
-<span class="nc bnc" id="L210" title="All 2 branches missed.">        if (status == null) {</span>
-<span class="nc" id="L211">            throw new ValidationException(&quot;A valid status must be provided&quot;);</span>
+<span class="nc bnc" id="L250" title="All 2 branches missed.">        if (status == null) {</span>
+<span class="nc" id="L251">            throw new ValidationException(&quot;A valid status must be provided&quot;);</span>
         }
 
-<span class="nc bnc" id="L214" title="All 4 branches missed.">        if (user == null || user.getId() == null) {</span>
-<span class="nc" id="L215">            throw new ValidationException(&quot;A valid user must be provided&quot;);</span>
+<span class="nc bnc" id="L254" title="All 4 branches missed.">        if (user == null || user.getId() == null) {</span>
+<span class="nc" id="L255">            throw new ValidationException(&quot;A valid user must be provided&quot;);</span>
         }
 
-<span class="nc" id="L218">        var trip = tripRepository.findById(tripId)</span>
-<span class="nc" id="L219">            .orElseThrow(() -&gt; new ValidationException(&quot;Trip not found&quot;));</span>
+<span class="nc" id="L258">        var trip = tripRepository.findById(tripId)</span>
+<span class="nc" id="L259">            .orElseThrow(() -&gt; new ValidationException(&quot;Trip not found&quot;));</span>
 
-<span class="nc bnc" id="L221" title="All 4 branches missed.">        if (trip.getDriver() == null || trip.getDriver().getId() == null) {</span>
-<span class="nc" id="L222">            throw new ValidationException(&quot;Trip owner not found&quot;);</span>
+<span class="nc bnc" id="L261" title="All 4 branches missed.">        if (trip.getDriver() == null || trip.getDriver().getId() == null) {</span>
+<span class="nc" id="L262">            throw new ValidationException(&quot;Trip owner not found&quot;);</span>
         }
 
-<span class="nc bnc" id="L225" title="All 2 branches missed.">        if (!user.getId().equals(trip.getDriver().getId())) {</span>
-<span class="nc" id="L226">            throw new ValidationException(&quot;Only the trip owner can view all trip participants&quot;);</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">        if (!user.getId().equals(trip.getDriver().getId())) {</span>
+<span class="nc" id="L266">            throw new ValidationException(&quot;Only the trip owner can view all trip participants&quot;);</span>
         }
 
-<span class="nc" id="L229">        return tripParticipantRepository.findAllByTripIdAndStatus(tripId, status);</span>
+<span class="nc" id="L269">        return tripParticipantRepository.findAllByTripIdAndStatus(tripId, status);</span>
     }
 
     @Transactional
     public List&lt;Trip&gt; findAvailableTrips(String startAddress) {
         GeonorgeAddress start;
         try {
-<span class="nc" id="L236">            start = addressService.search(startAddress).getFirst();</span>
+<span class="nc" id="L276">            start = addressService.search(startAddress).getFirst();</span>
         }
-<span class="nc" id="L238">        catch (NoSuchElementException e) {</span>
-<span class="nc" id="L239">            throw new ValidationException(&quot;Start address not found!&quot;);</span>
-<span class="nc" id="L240">        }</span>
+<span class="nc" id="L278">        catch (NoSuchElementException e) {</span>
+<span class="nc" id="L279">            throw new ValidationException(&quot;Start address not found!&quot;);</span>
+<span class="nc" id="L280">        }</span>
 
-<span class="nc" id="L242">        var municipality = start.municipality();</span>
-<span class="nc" id="L243">        return tripRepository.findAvailableTripsByOrigin(municipality);</span>
+<span class="nc" id="L282">        var municipality = start.municipality();</span>
+<span class="nc" id="L283">        return tripRepository.findAvailableTripsByOrigin(municipality);</span>
+    }
+
+    @Transactional
+    public List&lt;TripParticipant&gt; getAllParticipants(Integer tripId, User user) {
+<span class="nc bnc" id="L288" title="All 2 branches missed.">        if (tripId == null) {</span>
+<span class="nc" id="L289">            throw new ValidationException(&quot;A valid tripId must be provided&quot;);</span>
+        }
+
+<span class="nc bnc" id="L292" title="All 4 branches missed.">        if (user == null || user.getId() == null) {</span>
+<span class="nc" id="L293">            throw new ValidationException(&quot;A valid user must be provided&quot;);</span>
+        }
+
+<span class="nc" id="L296">        var trip = tripRepository.findById(tripId)</span>
+<span class="nc" id="L297">            .orElseThrow(() -&gt; new ValidationException(&quot;Trip not found&quot;));</span>
+
+<span class="nc bnc" id="L299" title="All 4 branches missed.">        if (trip.getDriver() == null || trip.getDriver().getId() == null) {</span>
+<span class="nc" id="L300">            throw new ValidationException(&quot;Trip owner not found&quot;);</span>
+        }
+
+<span class="nc bnc" id="L303" title="All 2 branches missed.">        if (!user.getId().equals(trip.getDriver().getId())) {</span>
+<span class="nc" id="L304">            throw new ValidationException(&quot;Only the trip owner can view all trip participants&quot;);</span>
+        }
+
+<span class="nc" id="L307">        var participants = tripParticipantRepository.findAllWithUserByTripId(tripId);</span>
+<span class="nc bnc" id="L308" title="All 2 branches missed.">        return participants != null ? participants : List.of();</span>
     }
 
 }

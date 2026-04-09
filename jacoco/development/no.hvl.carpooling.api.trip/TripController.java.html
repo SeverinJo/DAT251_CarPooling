@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TripController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">carpooling-backend</a> &gt; <a href="index.source.html" class="el_package">no.hvl.carpooling.api.trip</a> &gt; <span class="el_source">TripController.java</span></div><h1>TripController.java</h1><pre class="source lang-java linenums">package no.hvl.carpooling.api.trip;
 
+import no.hvl.carpooling.database.entity.TripParticipantStatus;
 import no.hvl.carpooling.security.UserPrincipal;
+import no.hvl.carpooling.service.trip.TripParticipationTimeFilter;
+import no.hvl.carpooling.service.trip.TripParticipationTuple;
 import no.hvl.carpooling.service.trip.TripService;
 import no.hvl.carpooling.database.entity.Address;
 import no.hvl.carpooling.database.entity.Trip;
@@ -9,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(&quot;/api/trips&quot;)
@@ -24,80 +29,172 @@ public class TripController {
     private final TripService tripService;
 
     @Autowired
-<span class="fc" id="L27">    public TripController(TripService tripService) {</span>
-<span class="fc" id="L28">        this.tripService = tripService;</span>
-<span class="fc" id="L29">    }</span>
+<span class="fc" id="L32">    public TripController(TripService tripService) {</span>
+<span class="fc" id="L33">        this.tripService = tripService;</span>
+<span class="fc" id="L34">    }</span>
 
     @PostMapping
     public ResponseEntity&lt;TripResponse&gt; create(
         @RequestBody TripCreationRequest request,
         @AuthenticationPrincipal UserPrincipal principal
     ) {
-<span class="nc" id="L36">        var trip = tripService.createTrip(</span>
-<span class="nc" id="L37">            request.startAddress(),</span>
-<span class="nc" id="L38">            request.destinationAddress(),</span>
-<span class="nc" id="L39">            request.departureTimeInIsoFormat(),</span>
-<span class="nc" id="L40">            request.seatsAvailable(),</span>
-<span class="nc" id="L41">            principal.user()</span>
+<span class="nc" id="L41">        var trip = tripService.createTrip(</span>
+<span class="nc" id="L42">            request.startAddress(),</span>
+<span class="nc" id="L43">            request.destinationAddress(),</span>
+<span class="nc" id="L44">            request.departureTimeInIsoFormat(),</span>
+<span class="nc" id="L45">            request.seatsAvailable(),</span>
+<span class="nc" id="L46">            principal.user()</span>
         );
 
-<span class="nc" id="L44">        var response = new TripResponse(</span>
-<span class="nc" id="L45">            trip.getId(),</span>
-<span class="nc" id="L46">            trip.getDriver().getId(),</span>
-<span class="nc" id="L47">            trip.getDriver().getUsername(),</span>
-<span class="nc" id="L48">            map(trip.getOrigin()),</span>
-<span class="nc" id="L49">            map(trip.getDestination()),</span>
-<span class="nc" id="L50">            trip.getOriginMunicipality(),</span>
-<span class="nc" id="L51">            trip.getDepartureTime(),</span>
-<span class="nc" id="L52">            trip.getSeatsAvailable(),</span>
-<span class="nc" id="L53">            trip.getCreatedAt()</span>
+<span class="nc" id="L49">        var response = new TripResponse(</span>
+<span class="nc" id="L50">            trip.getId(),</span>
+<span class="nc" id="L51">            trip.getDriver().getId(),</span>
+<span class="nc" id="L52">            trip.getDriver().getUsername(),</span>
+<span class="nc" id="L53">            map(trip.getOrigin()),</span>
+<span class="nc" id="L54">            map(trip.getDestination()),</span>
+<span class="nc" id="L55">            trip.getOriginMunicipality(),</span>
+<span class="nc" id="L56">            trip.getDepartureTime(),</span>
+<span class="nc" id="L57">            trip.getSeatsAvailable(),</span>
+<span class="nc" id="L58">            trip.getCreatedAt()</span>
         );
 
-<span class="nc" id="L56">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
+<span class="nc" id="L61">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
     }
 
     @GetMapping
     public List&lt;TripResponse&gt; getAvailableTripsByOrigin(@RequestParam String startAddress) {
-<span class="nc" id="L61">        var availableTrips = tripService.findAvailableTrips(startAddress);</span>
-<span class="nc" id="L62">        return map(availableTrips);</span>
+<span class="nc" id="L66">        var availableTrips = tripService.findAvailableTrips(startAddress);</span>
+<span class="nc" id="L67">        return map(availableTrips);</span>
+    }
+
+    @GetMapping(&quot;/my-participations&quot;)
+    public List&lt;TripParticipationResponse&gt; getMyParticipations(
+        @RequestParam TripParticipationTimeFilter timeFilter,
+        @AuthenticationPrincipal UserPrincipal principal
+    ) {
+<span class="nc" id="L75">        var user = principal.user();</span>
+<span class="nc" id="L76">        var participations = tripService.getMyParticipations(user, timeFilter);</span>
+
+<span class="nc" id="L78">        return participations.stream()</span>
+<span class="nc" id="L79">            .map(this::map)</span>
+<span class="nc" id="L80">            .filter(Objects::nonNull)</span>
+<span class="nc" id="L81">            .toList();</span>
+    }
+
+    @GetMapping(&quot;/my-trips&quot;)
+    public List&lt;TripResponse&gt; getMyTripsAsDriver(
+        @RequestParam TripParticipationTimeFilter timeFilter,
+        @AuthenticationPrincipal UserPrincipal principal
+    ) {
+<span class="nc" id="L89">        var user = principal.user();</span>
+<span class="nc" id="L90">        var trips = tripService.getMyTripsAsDriver(user, timeFilter);</span>
+<span class="nc" id="L91">        return map(trips);</span>
+    }
+
+    @PostMapping(&quot;/participations&quot;)
+    public ResponseEntity&lt;Void&gt; participateInTrip(
+        @RequestParam Integer tripId,
+        @AuthenticationPrincipal UserPrincipal principal
+    ) {
+<span class="nc" id="L99">        var user = principal.user();</span>
+<span class="nc" id="L100">        tripService.addParticipantToTrip(tripId, user);</span>
+<span class="nc" id="L101">        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();</span>
+    }
+
+    @GetMapping(&quot;/{tripId}/participants&quot;)
+    public List&lt;TripParticipantResponse&gt; getTripParticipants(
+        @PathVariable Integer tripId,
+        @AuthenticationPrincipal UserPrincipal principal
+    ) {
+<span class="nc" id="L109">        var user = principal.user();</span>
+<span class="nc" id="L110">        var participants = tripService.getAllParticipants(tripId, user);</span>
+
+<span class="nc" id="L112">        return participants.stream()</span>
+<span class="nc" id="L113">            .map(tp -&gt; new TripParticipantResponse(</span>
+<span class="nc" id="L114">                tp.getId(),</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                tp.getUser() != null ? tp.getUser().getId() : null,</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">                tp.getUser() != null ? tp.getUser().getUsername() : null,</span>
+<span class="nc" id="L117">                tp.getStatus(),</span>
+<span class="nc" id="L118">                tp.getRequestedAt(),</span>
+<span class="nc" id="L119">                tp.getUpdatedAt()</span>
+            ))
+<span class="nc" id="L121">            .toList();</span>
+    }
+
+    @PostMapping(&quot;/participants/{tripParticipantId}/status&quot;)
+    public ResponseEntity&lt;Void&gt; setParticipantStatus(
+        @PathVariable Integer tripParticipantId,
+        @RequestParam TripParticipantStatus status,
+        @AuthenticationPrincipal UserPrincipal principal
+    ) {
+<span class="nc" id="L130">        var user = principal.user();</span>
+<span class="nc" id="L131">        tripService.setParticipantStatus(tripParticipantId, status, user);</span>
+<span class="nc" id="L132">        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();</span>
+    }
+
+    private TripParticipationResponse map(TripParticipationTuple tuple) {
+<span class="nc bnc" id="L136" title="All 6 branches missed.">        if (tuple == null || tuple.trip() == null || tuple.participation() == null) {</span>
+<span class="nc" id="L137">            return null;</span>
+        }
+
+<span class="nc" id="L140">        var trip = tuple.trip();</span>
+<span class="nc" id="L141">        var participation = tuple.participation();</span>
+
+<span class="nc" id="L143">        return new TripParticipationResponse(</span>
+<span class="nc" id="L144">            participation.getId(),</span>
+<span class="nc" id="L145">            participation.getStatus(),</span>
+<span class="nc" id="L146">            participation.getRequestedAt(),</span>
+<span class="nc" id="L147">            participation.getUpdatedAt(),</span>
+            new TripResponse(
+<span class="nc" id="L149">                trip.getId(),</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">                trip.getDriver() != null ? trip.getDriver().getId() : null,</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">                trip.getDriver() != null ? trip.getDriver().getUsername() : null,</span>
+<span class="nc" id="L152">                map(trip.getOrigin()),</span>
+<span class="nc" id="L153">                map(trip.getDestination()),</span>
+<span class="nc" id="L154">                trip.getOriginMunicipality(),</span>
+<span class="nc" id="L155">                trip.getDepartureTime(),</span>
+<span class="nc" id="L156">                trip.getSeatsAvailable(),</span>
+<span class="nc" id="L157">                trip.getCreatedAt()</span>
+            )
+        );
     }
 
     private List&lt;TripResponse&gt; map(List&lt;Trip&gt; trips) {
-<span class="nc bnc" id="L66" title="All 4 branches missed.">        if (trips == null || trips.isEmpty()) {</span>
-<span class="nc" id="L67">            return List.of();</span>
+<span class="nc bnc" id="L163" title="All 4 branches missed.">        if (trips == null || trips.isEmpty()) {</span>
+<span class="nc" id="L164">            return List.of();</span>
         }
 
-<span class="nc" id="L70">        return trips.stream()</span>
-<span class="nc" id="L71">            .map(trip -&gt; new TripResponse(</span>
-<span class="nc" id="L72">                trip.getId(),</span>
-<span class="nc bnc" id="L73" title="All 2 branches missed.">                trip.getDriver() != null ? trip.getDriver().getId() : null,</span>
-<span class="nc bnc" id="L74" title="All 2 branches missed.">                trip.getDriver() != null ? trip.getDriver().getUsername() : null,</span>
-<span class="nc" id="L75">                map(trip.getOrigin()),</span>
-<span class="nc" id="L76">                map(trip.getDestination()),</span>
-<span class="nc" id="L77">                trip.getOriginMunicipality(),</span>
-<span class="nc" id="L78">                trip.getDepartureTime(),</span>
-<span class="nc" id="L79">                trip.getSeatsAvailable(),</span>
-<span class="nc" id="L80">                trip.getCreatedAt()</span>
+<span class="nc" id="L167">        return trips.stream()</span>
+<span class="nc" id="L168">            .map(trip -&gt; new TripResponse(</span>
+<span class="nc" id="L169">                trip.getId(),</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">                trip.getDriver() != null ? trip.getDriver().getId() : null,</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">                trip.getDriver() != null ? trip.getDriver().getUsername() : null,</span>
+<span class="nc" id="L172">                map(trip.getOrigin()),</span>
+<span class="nc" id="L173">                map(trip.getDestination()),</span>
+<span class="nc" id="L174">                trip.getOriginMunicipality(),</span>
+<span class="nc" id="L175">                trip.getDepartureTime(),</span>
+<span class="nc" id="L176">                trip.getSeatsAvailable(),</span>
+<span class="nc" id="L177">                trip.getCreatedAt()</span>
             ))
-<span class="nc" id="L82">            .toList();</span>
+<span class="nc" id="L179">            .toList();</span>
     }
 
     private TripResponse.Address map(Address address) {
-<span class="nc bnc" id="L86" title="All 2 branches missed.">        if (address == null) {</span>
-<span class="nc" id="L87">            return null;</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">        if (address == null) {</span>
+<span class="nc" id="L184">            return null;</span>
         }
 
-<span class="nc" id="L90">        return new TripResponse.Address(</span>
-<span class="nc" id="L91">            address.getId(),</span>
-<span class="nc" id="L92">            address.getAddressName(),</span>
-<span class="nc" id="L93">            address.getNumber(),</span>
-<span class="nc" id="L94">            address.getLetter(),</span>
-<span class="nc" id="L95">            address.getMunicipality(),</span>
-<span class="nc" id="L96">            address.getCity(),</span>
-<span class="nc" id="L97">            address.getPostalCode(),</span>
-<span class="nc" id="L98">            address.getEpsg(),</span>
-<span class="nc" id="L99">            address.getLatitude(),</span>
-<span class="nc" id="L100">            address.getLongitude()</span>
+<span class="nc" id="L187">        return new TripResponse.Address(</span>
+<span class="nc" id="L188">            address.getId(),</span>
+<span class="nc" id="L189">            address.getAddressName(),</span>
+<span class="nc" id="L190">            address.getNumber(),</span>
+<span class="nc" id="L191">            address.getLetter(),</span>
+<span class="nc" id="L192">            address.getMunicipality(),</span>
+<span class="nc" id="L193">            address.getCity(),</span>
+<span class="nc" id="L194">            address.getPostalCode(),</span>
+<span class="nc" id="L195">            address.getEpsg(),</span>
+<span class="nc" id="L196">            address.getLatitude(),</span>
+<span class="nc" id="L197">            address.getLongitude()</span>
         );
     }
 
