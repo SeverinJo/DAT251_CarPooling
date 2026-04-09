@@ -70,23 +70,20 @@ export default function LoginPage() {
                             onChange={(e) => setPassword(e.target.value)}
                         />
 
-                            <Button variant="contained" size="large" fullWidth
-                                    onClick={() => navigate("/")}>
-                                Logg in
-                            </Button>
-                            <Divider>
-                                or
-                            </Divider>
-                            <Button
-                                variant="outlined" size="large" fullWidth
-                                startIcon={
-                                    <img
-                                        src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
-                                        alt="Google"
-                                        style={{ width: 20, height: 20 }}
-                                    />
-                                }>Google</Button>
-                        </Stack>
+                        <Button variant="contained" size="large" fullWidth type="submit" disabled={loading}>
+                            {loading ? "Logging in..." : "Log in"}
+                        </Button>
+                        <Divider>or</Divider>
+                        <Button
+                            variant="outlined" size="large" fullWidth
+                            startIcon={
+                                <img
+                                    src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
+                                    alt="Google"
+                                    style={{ width: 20, height: 20 }}
+                                />
+                            }>Google</Button>
+                    </Stack>
                     </Paper>
                 </Box>
             </Container>
