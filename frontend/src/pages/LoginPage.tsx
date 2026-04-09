@@ -1,6 +1,8 @@
 import {Box, Button, Container, Divider, Paper, Stack, TextField, Typography} from "@mui/material";
+import {useNavigate} from "react-router-dom";
 
 export default function LoginPage() {
+    const navigate = useNavigate();
     return (
             <Container maxWidth="sm">
                 <Box
@@ -35,7 +37,8 @@ export default function LoginPage() {
                                 required
                             />
 
-                            <Button variant="contained" size="large" fullWidth>
+                            <Button variant="contained" size="large" fullWidth
+                                    onClick={() => navigate("/")}>
                                 Logg in
                             </Button>
                             <Divider>

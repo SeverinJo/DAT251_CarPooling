@@ -19,6 +19,7 @@ import {
     useMediaQuery,
     useTheme,
 } from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import GroupIcon from "@mui/icons-material/Group";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -58,6 +59,7 @@ export default function Layout({ children }: LayoutProps) {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [feedExpanded, setFeedExpanded] = useState(false);
     const [tripExpanded, setTripExpanded] = useState(false);
+    const isLoginPage = location.pathname === "/login";
 
     const isActive = (path: string) => location.pathname.startsWith(path);
 
@@ -70,191 +72,209 @@ export default function Layout({ children }: LayoutProps) {
 
     return (
         <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column", bgcolor: "background.default" }}>
-            <AppBar position="sticky" elevation={1} sx={{ bgcolor: "background.paper", color: "text.primary" }} >
-                <Toolbar sx={{ width: "100%", px: { xs: 1, md: 3 }} }>
-                    <Typography
-                        variant="h6"
-                        sx={{ fontWeight: 700, color: "primary.main", mr: 4, cursor: "pointer" }}
-                        onClick={() => navigate("/")}
-                    >
-                        EverybodyGo
-                    </Typography>
+            {!isLoginPage && (
+                <AppBar position="sticky" elevation={1} sx={{ bgcolor: "background.paper", color: "text.primary" }} >
+                    <Toolbar sx={{ width: "100%", px: { xs: 1, md: 3 }} }>
+                        <Typography
+                            variant="h6"
+                            sx={{ fontWeight: 700, color: "primary.main", mr: 4, cursor: "pointer" }}
+                            onClick={() => navigate("/")}
+                        >
+                            EverybodyGo
+                        </Typography>
 
-                    {isMobile ? (
-                        <Box sx={{ ml: "auto" }}>
-                            <IconButton onClick={() => setDrawerOpen(true)}>
-                                <MenuIcon />
-                            </IconButton>
-                        </Box>
-                    ) : (
-                        <>
-                            <Box sx={{ ml: "auto", display: "flex" }}>
-                                <Button
-                                    startIcon={<GroupIcon />}
-                                    sx={buttonSx("/feed")}
-                                    onClick={(e: MouseEvent<HTMLElement>) => { setFeedAnchor(e.currentTarget); setTripAnchor(null); }}
-                                >
-                                    Feed
-                                </Button>
-                                <Menu
-                                    anchorEl={feedAnchor}
-                                    open={Boolean(feedAnchor)}
-                                    onClose={() => setFeedAnchor(null)}
-                                    anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-                                    transformOrigin={{ vertical: "top", horizontal: "left" }}
-                                    slotProps={{
-                                        paper: {
-                                            onMouseLeave: () => setFeedAnchor(null),
-                                            onMouseEnter: () => setTripAnchor(null),
-                                        }
-                                    }}
-                                    disableScrollLock
-                                >
-                                    {feedSubItems.map((item) => (
-                                        <MenuItem
-                                            key={item.path}
-                                            onClick={() => { navigate(item.path); setFeedAnchor(null); }}
-                                            selected={location.pathname === item.path}
-                                        >
-                                            <ListItemIcon>{item.icon}</ListItemIcon>
-                                            {item.label}
-                                        </MenuItem>
-                                    ))}
-                                </Menu>
-
-                                <Button
-                                    startIcon={<AddCircleOutlineIcon />}
-                                    sx={buttonSx("/trip")}
-                                    onClick={(e: MouseEvent<HTMLElement>) => { setTripAnchor(e.currentTarget); setFeedAnchor(null); }}
-                                >
-                                    New Trip
-                                </Button>
-                                <Menu
-                                    anchorEl={tripAnchor}
-                                    open={Boolean(tripAnchor)}
-                                    onClose={() => setTripAnchor(null)}
-                                    anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-                                    transformOrigin={{ vertical: "top", horizontal: "left" }}
-                                    slotProps={{
-                                        paper: {
-                                            onMouseLeave: () => setTripAnchor(null),
-                                            onMouseEnter: () => setFeedAnchor(null),
-                                        }
-                                    }}
-                                    disableScrollLock
-                                >
-                                    {newTripSubItems.map((item) => (
-                                        <MenuItem
-                                            key={item.path}
-                                            onClick={() => { navigate(item.path); setTripAnchor(null); }}
-                                            selected={location.pathname === item.path}
-                                        >
-                                            <ListItemIcon>{item.icon}</ListItemIcon>
-                                            {item.label}
-                                        </MenuItem>
-                                    ))}
-                                </Menu>
-
-                                <Button
-                                    startIcon={<ChatIcon />}
-                                    sx={buttonSx("/chat")}
-                                    onClick={() => navigate("/chat")}
-                                    onMouseEnter={() => { setFeedAnchor(null); setTripAnchor(null); }}
-                                >
-                                    Chat
-                                </Button>
-                                <Button
-                                    startIcon={<PersonIcon />}
-                                    sx={buttonSx("/profile")}
-                                    onClick={() => navigate("/profile")}
-                                    onMouseEnter={() => { setFeedAnchor(null); setTripAnchor(null); }}
-                                >
-                                    Profile
-                                </Button>
+                        {isMobile ? (
+                            <Box sx={{ ml: "auto" }}>
+                                <IconButton onClick={() => setDrawerOpen(true)}>
+                                    <MenuIcon />
+                                </IconButton>
                             </Box>
-                        </>
-                    )}
-                </Toolbar>
-            </AppBar>
+                        ) : (
+                            <>
+                                <Box sx={{ ml: "auto", display: "flex" }}>
+                                    <Button
+                                        startIcon={<GroupIcon />}
+                                        sx={buttonSx("/feed")}
+                                        onClick={(e: MouseEvent<HTMLElement>) => { setFeedAnchor(e.currentTarget); setTripAnchor(null); }}
+                                    >
+                                        Feed
+                                    </Button>
+                                    <Menu
+                                        anchorEl={feedAnchor}
+                                        open={Boolean(feedAnchor)}
+                                        onClose={() => setFeedAnchor(null)}
+                                        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                                        transformOrigin={{ vertical: "top", horizontal: "left" }}
+                                        slotProps={{
+                                            paper: {
+                                                onMouseLeave: () => setFeedAnchor(null),
+                                                onMouseEnter: () => setTripAnchor(null),
+                                            }
+                                        }}
+                                        disableScrollLock
+                                    >
+                                        {feedSubItems.map((item) => (
+                                            <MenuItem
+                                                key={item.path}
+                                                onClick={() => { navigate(item.path); setFeedAnchor(null); }}
+                                                selected={location.pathname === item.path}
+                                            >
+                                                <ListItemIcon>{item.icon}</ListItemIcon>
+                                                {item.label}
+                                            </MenuItem>
+                                        ))}
+                                    </Menu>
 
-            {/* Mobile drawer */}
-            <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-                <Box sx={{ width: 260, pt: 2 }}>
-                    <Typography variant="h6" sx={{ px: 2, pb: 2, fontWeight: 700, color: "primary.main" }}>
-                        EverybodyGo
-                    </Typography>
+                                    <Button
+                                        startIcon={<AddCircleOutlineIcon />}
+                                        sx={buttonSx("/trip")}
+                                        onClick={(e: MouseEvent<HTMLElement>) => { setTripAnchor(e.currentTarget); setFeedAnchor(null); }}
+                                    >
+                                        New Trip
+                                    </Button>
+                                    <Menu
+                                        anchorEl={tripAnchor}
+                                        open={Boolean(tripAnchor)}
+                                        onClose={() => setTripAnchor(null)}
+                                        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                                        transformOrigin={{ vertical: "top", horizontal: "left" }}
+                                        slotProps={{
+                                            paper: {
+                                                onMouseLeave: () => setTripAnchor(null),
+                                                onMouseEnter: () => setFeedAnchor(null),
+                                            }
+                                        }}
+                                        disableScrollLock
+                                    >
+                                        {newTripSubItems.map((item) => (
+                                            <MenuItem
+                                                key={item.path}
+                                                onClick={() => { navigate(item.path); setTripAnchor(null); }}
+                                                selected={location.pathname === item.path}
+                                            >
+                                                <ListItemIcon>{item.icon}</ListItemIcon>
+                                                {item.label}
+                                            </MenuItem>
+                                        ))}
+                                    </Menu>
 
-                    <List>
-                        <ListItem disablePadding>
-                            <ListItemButton onClick={() => setFeedExpanded(!feedExpanded)}>
-                                <ListItemIcon><GroupIcon /></ListItemIcon>
-                                <ListItemText primary="Feed" />
-                                {feedExpanded ? <ExpandLess /> : <ExpandMore />}
-                            </ListItemButton>
-                        </ListItem>
-                        <Collapse in={feedExpanded}>
-                            <List disablePadding>
-                                {feedSubItems.map((item) => (
-                                    <ListItem key={item.path} disablePadding>
-                                        <ListItemButton
-                                            sx={{ pl: 4 }}
-                                            selected={location.pathname === item.path}
-                                            onClick={() => { navigate(item.path); setDrawerOpen(false); }}
-                                        >
-                                            <ListItemIcon>{item.icon}</ListItemIcon>
-                                            <ListItemText primary={item.label} />
-                                        </ListItemButton>
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </Collapse>
+                                    <Button
+                                        startIcon={<ChatIcon />}
+                                        sx={buttonSx("/chat")}
+                                        onClick={() => navigate("/chat")}
+                                        onMouseEnter={() => { setFeedAnchor(null); setTripAnchor(null); }}
+                                    >
+                                        Chat
+                                    </Button>
+                                    <Button
+                                        startIcon={<PersonIcon />}
+                                        sx={buttonSx("/profile")}
+                                        onClick={() => navigate("/profile")}
+                                        onMouseEnter={() => { setFeedAnchor(null); setTripAnchor(null); }}
+                                    >
+                                        Profile
+                                    </Button>
+                                    <Button
+                                        startIcon={<LogoutIcon />}
+                                        sx={{ color: "error.main", textTransform: "none", ml: 1 }}
+                                        onClick={() => navigate("/login")}
+                                        onMouseEnter={() => { setFeedAnchor(null); setTripAnchor(null); }}
+                                    >
+                                        Log out
+                                    </Button>
+                                </Box>
+                            </>
+                        )}
+                    </Toolbar>
+                </AppBar>
+            )}
 
-                        <ListItem disablePadding>
-                            <ListItemButton onClick={() => setTripExpanded(!tripExpanded)}>
-                                <ListItemIcon><AddCircleOutlineIcon /></ListItemIcon>
-                                <ListItemText primary="New Trip" />
-                                {tripExpanded ? <ExpandLess /> : <ExpandMore />}
-                            </ListItemButton>
-                        </ListItem>
-                        <Collapse in={tripExpanded}>
-                            <List disablePadding>
-                                {newTripSubItems.map((item) => (
-                                    <ListItem key={item.path} disablePadding>
-                                        <ListItemButton
-                                            sx={{ pl: 4 }}
-                                            selected={location.pathname === item.path}
-                                            onClick={() => { navigate(item.path); setDrawerOpen(false); }}
-                                        >
-                                            <ListItemIcon>{item.icon}</ListItemIcon>
-                                            <ListItemText primary={item.label} />
-                                        </ListItemButton>
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </Collapse>
 
-                        <ListItem disablePadding>
-                            <ListItemButton
-                                selected={isActive("/chat")}
-                                onClick={() => { navigate("/chat"); setDrawerOpen(false); }}
-                            >
-                                <ListItemIcon><ChatIcon /></ListItemIcon>
-                                <ListItemText primary="Chat" />
-                            </ListItemButton>
-                        </ListItem>
+            {!isLoginPage && (
+                <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+                    <Box sx={{ width: 260, pt: 2 }}>
+                        <Typography variant="h6" sx={{ px: 2, pb: 2, fontWeight: 700, color: "primary.main" }}>
+                            EverybodyGo
+                        </Typography>
 
-                        <ListItem disablePadding>
-                            <ListItemButton
-                                selected={isActive("/profile")}
-                                onClick={() => { navigate("/profile"); setDrawerOpen(false); }}
-                            >
-                                <ListItemIcon><PersonIcon /></ListItemIcon>
-                                <ListItemText primary="Profile" />
-                            </ListItemButton>
-                        </ListItem>
-                    </List>
-                </Box>
-            </Drawer>
+                        <List>
+                            <ListItem disablePadding>
+                                <ListItemButton onClick={() => setFeedExpanded(!feedExpanded)}>
+                                    <ListItemIcon><GroupIcon /></ListItemIcon>
+                                    <ListItemText primary="Feed" />
+                                    {feedExpanded ? <ExpandLess /> : <ExpandMore />}
+                                </ListItemButton>
+                            </ListItem>
+                            <Collapse in={feedExpanded}>
+                                <List disablePadding>
+                                    {feedSubItems.map((item) => (
+                                        <ListItem key={item.path} disablePadding>
+                                            <ListItemButton
+                                                sx={{ pl: 4 }}
+                                                selected={location.pathname === item.path}
+                                                onClick={() => { navigate(item.path); setDrawerOpen(false); }}
+                                            >
+                                                <ListItemIcon>{item.icon}</ListItemIcon>
+                                                <ListItemText primary={item.label} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Collapse>
+
+                            <ListItem disablePadding>
+                                <ListItemButton onClick={() => setTripExpanded(!tripExpanded)}>
+                                    <ListItemIcon><AddCircleOutlineIcon /></ListItemIcon>
+                                    <ListItemText primary="New Trip" />
+                                    {tripExpanded ? <ExpandLess /> : <ExpandMore />}
+                                </ListItemButton>
+                            </ListItem>
+                            <Collapse in={tripExpanded}>
+                                <List disablePadding>
+                                    {newTripSubItems.map((item) => (
+                                        <ListItem key={item.path} disablePadding>
+                                            <ListItemButton
+                                                sx={{ pl: 4 }}
+                                                selected={location.pathname === item.path}
+                                                onClick={() => { navigate(item.path); setDrawerOpen(false); }}
+                                            >
+                                                <ListItemIcon>{item.icon}</ListItemIcon>
+                                                <ListItemText primary={item.label} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Collapse>
+
+                            <ListItem disablePadding>
+                                <ListItemButton
+                                    selected={isActive("/chat")}
+                                    onClick={() => { navigate("/chat"); setDrawerOpen(false); }}
+                                >
+                                    <ListItemIcon><ChatIcon /></ListItemIcon>
+                                    <ListItemText primary="Chat" />
+                                </ListItemButton>
+                            </ListItem>
+
+                            <ListItem disablePadding>
+                                <ListItemButton
+                                    selected={isActive("/profile")}
+                                    onClick={() => { navigate("/profile"); setDrawerOpen(false); }}
+                                >
+                                    <ListItemIcon><PersonIcon /></ListItemIcon>
+                                    <ListItemText primary="Profile" />
+                                </ListItemButton>
+                            </ListItem>
+                            <ListItem disablePadding>
+                                <ListItemButton onClick={() => { navigate("/login"); setDrawerOpen(false); }}>
+                                    <ListItemIcon><LogoutIcon /></ListItemIcon>
+                                    <ListItemText primary="Log out" sx={{ color: "error.main" }} />
+                                </ListItemButton>
+                            </ListItem>
+                        </List>
+                    </Box>
+                </Drawer>
+            )}
 
             <Box sx={{ flex: 1, width: "100%" }}>
                 {children}
