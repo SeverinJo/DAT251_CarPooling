@@ -1,7 +1,6 @@
 package no.hvl.carpooling.service.trip;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.ValidationException;
 import no.hvl.carpooling.integrations.geonorge.GeonorgeAddress;
 import no.hvl.carpooling.database.entity.Trip;
 import no.hvl.carpooling.database.entity.TripParticipant;
@@ -9,6 +8,7 @@ import no.hvl.carpooling.database.entity.TripParticipantStatus;
 import no.hvl.carpooling.database.entity.User;
 import no.hvl.carpooling.database.repository.TripParticipantRepository;
 import no.hvl.carpooling.database.repository.TripRepository;
+import no.hvl.carpooling.exceptions.ValidationException;
 import no.hvl.carpooling.service.address.AddressService;
 import org.springframework.stereotype.Service;
 
@@ -100,6 +100,10 @@ public class TripService {
         var trip = tripRepository.findById(tripId)
             .orElseThrow(() -> new ValidationException("Trip not found"));
 
+        if (trip.getDepartureTime() != null && trip.getDepartureTime().isBefore(LocalDateTime.now())) {
+            throw new ValidationException("You can not participate in a trip in the past!");
+        }
+
         if (trip.getDriver() != null && user.getId().equals(trip.getDriver().getId())) {
             throw new ValidationException("Trip owner can not be added as a participant");
         }
@@ -107,6 +111,11 @@ public class TripService {
         var existing = tripParticipantRepository.findByTripIdAndUserId(tripId, user.getId());
         if (existing.isPresent()) {
             throw new ValidationException("User is already a participant (or has a pending request) for this trip");
+        }
+
+        var approvedCount = tripParticipantRepository.countByTripIdAndStatus(tripId, TripParticipantStatus.APPROVED);
+        if (approvedCount >= trip.getSeatsAvailable()) {
+            throw new ValidationException("No available seats left for this trip");
         }
 
         var participant = new TripParticipant();
@@ -154,6 +163,37 @@ public class TripService {
         return participations.stream()
             .map(tp -> new TripParticipationTuple(tp.getTrip(), tp))
             .toList();
+    }
+
+    @Transactional
+    public List<Trip> getMyTripsAsDriver(User user, TripParticipationTimeFilter timeFilter) {
+        if (user == null || user.getId() == null) {
+            throw new ValidationException("A valid user must be provided");
+        }
+        if (timeFilter == null) {
+            throw new ValidationException("A valid timeFilter must be provided");
+        }
+
+        var now = LocalDateTime.now();
+        return switch (timeFilter) {
+            case HISTORICAL -> tripRepository.findAllWithDetailsByDriverIdAndDepartureTimeBefore(user.getId(), now);
+            case UPCOMING -> tripRepository.findAllWithDetailsByDriverIdAndDepartureTimeAfterOrEqual(user.getId(), now);
+            case ALL -> {
+                var upcoming = tripRepository.findAllWithDetailsByDriverIdAndDepartureTimeAfterOrEqual(user.getId(), now);
+                var historical = tripRepository.findAllWithDetailsByDriverIdAndDepartureTimeBefore(user.getId(), now);
+
+                var all = new ArrayList<Trip>(
+                    (upcoming != null ? upcoming.size() : 0) + (historical != null ? historical.size() : 0)
+                );
+                if (upcoming != null && !upcoming.isEmpty()) {
+                    all.addAll(upcoming);
+                }
+                if (historical != null && !historical.isEmpty()) {
+                    all.addAll(historical);
+                }
+                yield all;
+            }
+        };
     }
 
     @Transactional(value = REQUIRES_NEW)
@@ -241,6 +281,31 @@ public class TripService {
 
         var municipality = start.municipality();
         return tripRepository.findAvailableTripsByOrigin(municipality);
+    }
+
+    @Transactional
+    public List<TripParticipant> getAllParticipants(Integer tripId, User user) {
+        if (tripId == null) {
+            throw new ValidationException("A valid tripId must be provided");
+        }
+
+        if (user == null || user.getId() == null) {
+            throw new ValidationException("A valid user must be provided");
+        }
+
+        var trip = tripRepository.findById(tripId)
+            .orElseThrow(() -> new ValidationException("Trip not found"));
+
+        if (trip.getDriver() == null || trip.getDriver().getId() == null) {
+            throw new ValidationException("Trip owner not found");
+        }
+
+        if (!user.getId().equals(trip.getDriver().getId())) {
+            throw new ValidationException("Only the trip owner can view all trip participants");
+        }
+
+        var participants = tripParticipantRepository.findAllWithUserByTripId(tripId);
+        return participants != null ? participants : List.of();
     }
 
 }

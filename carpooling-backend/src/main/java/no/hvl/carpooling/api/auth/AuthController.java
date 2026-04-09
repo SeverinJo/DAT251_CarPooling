@@ -53,11 +53,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user){
-        User createdUser = userService.saveUser(user);
-
-        // todo: return an user DTO without password hash (high vulnerability)
-//        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<Void> createUser(@Valid @RequestBody CreateUserRequest createUserRequest){
+        userService.saveUser(createUserRequest);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
