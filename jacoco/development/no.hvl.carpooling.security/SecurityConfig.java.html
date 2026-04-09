@@ -37,37 +37,42 @@ public class SecurityConfig {
 <span class="fc" id="L37">                .authorizeHttpRequests(auth -&gt; auth</span>
 <span class="fc" id="L38">                        .requestMatchers(HttpMethod.POST, &quot;/login&quot;).permitAll()</span>
 <span class="fc" id="L39">                        .requestMatchers(HttpMethod.POST, &quot;/users&quot;).permitAll()</span>
-<span class="fc" id="L40">                        .anyRequest().authenticated()</span>
+<span class="fc" id="L40">                        .requestMatchers(</span>
+                                &quot;/swagger-ui.html&quot;,
+                                &quot;/swagger-ui/**&quot;,
+                                &quot;/v3/api-docs/**&quot;
+<span class="fc" id="L44">                        ).permitAll()</span>
+<span class="fc" id="L45">                        .anyRequest().authenticated()</span>
                 )
-<span class="fc" id="L42">                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);</span>
+<span class="fc" id="L47">                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);</span>
 
-<span class="fc" id="L44">        return http.build();</span>
+<span class="fc" id="L49">        return http.build();</span>
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
             throws Exception {
-<span class="fc" id="L50">        return config.getAuthenticationManager();</span>
+<span class="fc" id="L55">        return config.getAuthenticationManager();</span>
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-<span class="fc" id="L55">        return new BCryptPasswordEncoder();</span>
+<span class="fc" id="L60">        return new BCryptPasswordEncoder();</span>
     }
 
     @Bean
     public CorsFilter corsFilter() {
-<span class="fc" id="L60">        CorsConfiguration config = new CorsConfiguration();</span>
+<span class="fc" id="L65">        CorsConfiguration config = new CorsConfiguration();</span>
 
-<span class="fc" id="L62">        config.setAllowCredentials(true);</span>
-<span class="fc" id="L63">        config.addAllowedOrigin(&quot;*&quot;); // your frontend</span>
-<span class="fc" id="L64">        config.addAllowedHeader(&quot;*&quot;);</span>
-<span class="fc" id="L65">        config.addAllowedMethod(&quot;*&quot;);</span>
+<span class="fc" id="L67">        config.setAllowCredentials(true);</span>
+<span class="fc" id="L68">        config.addAllowedOrigin(&quot;*&quot;); // your frontend</span>
+<span class="fc" id="L69">        config.addAllowedHeader(&quot;*&quot;);</span>
+<span class="fc" id="L70">        config.addAllowedMethod(&quot;*&quot;);</span>
 
-<span class="fc" id="L67">        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();</span>
-<span class="fc" id="L68">        source.registerCorsConfiguration(&quot;/**&quot;, config);</span>
+<span class="fc" id="L72">        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();</span>
+<span class="fc" id="L73">        source.registerCorsConfiguration(&quot;/**&quot;, config);</span>
 
-<span class="fc" id="L70">        return new CorsFilter(source);</span>
+<span class="fc" id="L75">        return new CorsFilter(source);</span>
     }
 
 }
