@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-api": "openapi-typescript-codegen --input http://localhost:8080/v3/api-docs --output src/api/generated --client fetch"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
