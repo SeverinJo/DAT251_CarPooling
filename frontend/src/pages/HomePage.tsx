@@ -1,5 +1,7 @@
+import FeedPage from "./FeedPage.tsx";
+
 function HomePage() {
-    return <div>HomePage</div>;
+    return <><FeedPage/></>;
 }
 
 export default HomePage;
