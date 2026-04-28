@@ -1,31 +1,26 @@
-import {useState} from "react";
-import type {User} from "../types";
-import {Container, Stack} from "@mui/material";
+import { useState } from "react";
+import { Container, Stack } from "@mui/material";
 import DriverList from "../components/trips/DriverList";
 import RoutePreview from "../components/trips/RoutePreview";
 import TripSearchForm from "../components/trips/TripSearchForm";
+import type { TripResponse } from "../api/generated/models/TripResponse";
+import { getTrips } from "../api/api";
 
 function TripPlanning() {
     const [from, setFrom] = useState("");
     const [to, setTo] = useState("");
+    const [trips, setTrips] = useState<TripResponse[]>([]);
     const [hasSearched, setHasSearched] = useState(false);
 
-    const drivers: User[] = [
-        {id: "1", name: "Ola Nordmann", email: "ola@gmail.com", rating: 6.5,
-            vehicle: {id: "1", ownerId:"1",  brand: "Tesla", model: "X", year: 2014, licensePlate: "123", availableSeats: 4} },
-        {id: "2", name: "Kari Nordmann", email: "kari@gmail.com", rating: 8.5,
-            vehicle: {id: "1", ownerId:"1",  brand: "Tesla", model: "Y", year: 2014, licensePlate: "123", availableSeats: 4} },
-    ];
-
-    const handleSearch = () => {
-        if (!from.trim() && !to.trim()) {
-            return;
-        }
+    const handleSearch = async () => {
+        if (!from.trim() && !to.trim()) return;
+        const results = await getTrips(from);
+        setTrips(results);
         setHasSearched(true);
-    }
+    };
 
     return (
-        <Container maxWidth="md" sx={{py: 4}} >
+        <Container maxWidth="md" sx={{ py: 4 }}>
             <Stack spacing={3}>
                 <TripSearchForm
                     from={from}
@@ -34,12 +29,12 @@ function TripPlanning() {
                     onToChange={setTo}
                     onSearch={handleSearch}
                 />
-                    {hasSearched && (
-                        <>
-                            <RoutePreview from={from} to={to}/>
-                            <DriverList drivers={drivers} />
-                        </>
-                    )}
+                {hasSearched && (
+                    <>
+                        <RoutePreview from={from} to={to} />
+                        <DriverList trips={trips} />
+                    </>
+                )}
             </Stack>
         </Container>
     );

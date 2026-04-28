@@ -1,30 +1,25 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, Container, Divider, Paper, Stack, TextField, Typography, Alert } from "@mui/material";
+import { Alert, Box, Button, Container, Paper, Stack, TextField, Typography } from "@mui/material";
+import { register } from "../api/api";
 
-export default function LoginPage() {
+export default function RegisterPage() {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
-    async function handleLogin(e: React.FormEvent) {
+    async function handleRegister(e: React.FormEvent) {
         e.preventDefault();
         setError(null);
         setLoading(true);
         try {
-            const params = new URLSearchParams({ username, password });
-            const res = await fetch(`/login?${params}`, { method: "POST" });
-            if (!res.ok) {
-                setError("Invalid username or password");
-                return;
-            }
-            const token = await res.text();
-            localStorage.setItem("token", token);
-            navigate("/");
+            await register(username, email, password);
+            navigate("/login");
         } catch {
-            setError("Could not connect to server");
+            setError("Registration failed. Username or email may already be taken.");
         } finally {
             setLoading(false);
         }
@@ -32,27 +27,20 @@ export default function LoginPage() {
 
     return (
         <Container maxWidth="sm">
-            <Box
-                sx={{
-                    minHeight: "calc(100vh - 64px)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}
-            >
+            <Box sx={{ minHeight: "calc(100vh - 64px)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Paper elevation={3} sx={{ p: 4, width: "100%", borderRadius: 3 }}>
-                    <Stack spacing={2} component="form" onSubmit={handleLogin}>
+                    <Stack spacing={2} component="form" onSubmit={handleRegister}>
                         <Typography variant="h4" component="h1">
-                            Login
+                            Create account
                         </Typography>
 
                         <Typography variant="body2" color="text.secondary">
-                            Don't have an account?{" "}
+                            Already have an account?{" "}
                             <Box component="span"
-                                onClick={() => navigate("/register")}
+                                onClick={() => navigate("/login")}
                                 sx={{ color: "primary.main", cursor: "pointer", fontWeight: 600 }}
                             >
-                                Create one
+                                Log in
                             </Box>
                         </Typography>
 
@@ -66,7 +54,14 @@ export default function LoginPage() {
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                         />
-
+                        <TextField
+                            label="Email"
+                            type="email"
+                            fullWidth
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
                         <TextField
                             label="Password"
                             type="password"
@@ -77,21 +72,11 @@ export default function LoginPage() {
                         />
 
                         <Button variant="contained" size="large" fullWidth type="submit" disabled={loading}>
-                            {loading ? "Logging in..." : "Log in"}
+                            {loading ? "Creating account..." : "Create account"}
                         </Button>
-                        <Divider>or</Divider>
-                        <Button
-                            variant="outlined" size="large" fullWidth
-                            startIcon={
-                                <img
-                                    src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
-                                    alt="Google"
-                                    style={{ width: 20, height: 20 }}
-                                />
-                            }>Google</Button>
                     </Stack>
-                    </Paper>
-                </Box>
-            </Container>
+                </Paper>
+            </Box>
+        </Container>
     );
 }

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { createTheme, ThemeProvider, CssBaseline } from "@mui/material";
 import Layout from "./components/Layout";
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import TripPlanningPage from "./pages/TripPlanning";
 import TripDetailsPage from "./pages/TripDetailsPage";
@@ -11,6 +12,7 @@ import NewTripPage from "./pages/NewTripPage.tsx";
 
 import ProfilePage from "./pages/ProfilePage";
 import MyCarpoolersPage from "./pages/MyCarpoolersPage.tsx";
+import MyTripsPage from "./pages/MyTripsPage";
 
 const theme = createTheme({
     palette: {
@@ -43,8 +45,10 @@ function App() {
                         <Route path="/feed/groups" element={<HomePage />} />
                         <Route path="/feed/discover" element={<FeedPage />} />
                         <Route path="/login" element={<LoginPage />} />
+                        <Route path="/register" element={<RegisterPage />} />
                         <Route path="/trip/search" element={<TripPlanningPage />} />
                         <Route path="/trip/offer" element={<NewTripPage />} />
+                        <Route path="/my-trips" element={<MyTripsPage />} />
                         <Route path="/trip/:id" element={<TripDetailsPage />} />
                         <Route path="/chat" element={<ChatPage />} />
                         <Route path="/chat/:id" element={<ChatPage />} />
