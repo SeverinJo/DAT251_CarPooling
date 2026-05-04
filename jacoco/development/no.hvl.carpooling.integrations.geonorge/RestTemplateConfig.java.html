@@ -2,14 +2,21 @@
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
+
 @Configuration
-<span class="fc" id="L8">public class RestTemplateConfig {</span>
+<span class="fc" id="L11">public class RestTemplateConfig {</span>
 
     @Bean(name = &quot;geonorgeRestTemplate&quot;)
     public RestTemplate geonorgeRestTemplate() {
-<span class="fc" id="L12">        return new RestTemplate();</span>
+<span class="fc" id="L15">        var restTemplate = new RestTemplate();</span>
+<span class="fc" id="L16">        restTemplate.getMessageConverters().stream()</span>
+<span class="fc" id="L17">            .filter(c -&gt; c instanceof StringHttpMessageConverter)</span>
+<span class="fc" id="L18">            .forEach(c -&gt; ((StringHttpMessageConverter) c).setDefaultCharset(StandardCharsets.UTF_8));</span>
+<span class="fc" id="L19">        return restTemplate;</span>
     }
 
 }

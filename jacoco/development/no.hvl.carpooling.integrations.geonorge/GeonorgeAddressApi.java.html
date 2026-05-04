@@ -36,17 +36,18 @@ public class GeonorgeAddressApi {
 <span class="fc" id="L36">            var uri = UriComponentsBuilder</span>
 <span class="fc" id="L37">                .fromUriString(url)</span>
 <span class="fc" id="L38">                .pathSegment(&quot;sok&quot;)</span>
-<span class="fc" id="L39">                .queryParam(&quot;sok&quot;, &quot;{searchQuery}&quot;)</span>
+<span class="fc" id="L39">                .queryParam(&quot;sok&quot;, searchQuery)</span>
 <span class="fc" id="L40">                .queryParam(&quot;treffPerSide&quot;, 10)</span>
 <span class="fc" id="L41">                .queryParam(&quot;side&quot;, 0)</span>
-<span class="fc" id="L42">                .buildAndExpand(searchQuery)</span>
-<span class="fc" id="L43">                .toUri();</span>
+<span class="fc" id="L42">                .build()</span>
+<span class="fc" id="L43">                .encode()</span>
+<span class="fc" id="L44">                .toUri();</span>
 
-<span class="fc" id="L45">            var response = restTemplate.getForEntity(uri, AddressSearchResponse.class);</span>
-<span class="fc" id="L46">            return response.getBody();</span>
+<span class="fc" id="L46">            var response = restTemplate.getForEntity(uri, AddressSearchResponse.class);</span>
+<span class="fc" id="L47">            return response.getBody();</span>
         }
-<span class="nc" id="L48">        catch (RestClientException e) {</span>
-<span class="nc" id="L49">            throw new GeonorgeNotAvailableException(&quot;Geonorge call failed&quot;, e);</span>
+<span class="nc" id="L49">        catch (RestClientException e) {</span>
+<span class="nc" id="L50">            throw new GeonorgeNotAvailableException(&quot;Geonorge call failed&quot;, e);</span>
         }
     }
 
