@@ -10,8 +10,8 @@ Include public transport in the app’s trip planning solution.
 - [ ]
 
 ## BFTB Score
-Bang:
-Buck:
-TOTAL:
+Bang: 8
+Buck: 8
+TOTAL: 1.00
 
 ## misc

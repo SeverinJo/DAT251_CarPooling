@@ -1,0 +1,193 @@
+### TripController end-to-end-ish manual checks (IntelliJ HTTP client)
+# Assumes the backend is running locally on :8080 and security is enabled.
+@host = http://localhost:8080
+
+# Fixed credentials.
+# Note: If you run this against a persistent DB and the users already exist,
+# the register requests may fail due to unique constraints. In that case,
+# change the usernames/emails below or delete the users in the DB.
+@driverUsername = driver_test
+@passengerUsername = passenger_test
+@driverEmail = driver_test@example.com
+@passengerEmail = passenger_test@example.com
+@password = password123
+
+### Register driver
+POST {{host}}/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "{{driverUsername}}",
+  "email": "{{driverEmail}}",
+  "password": "{{password}}"
+}
+
+> {%
+  client.test("register driver returns 204", function () {
+    client.assert(response.status === 204, "Expected 204 No Content");
+  });
+%}
+
+### Register passenger
+POST {{host}}/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "{{passengerUsername}}",
+  "email": "{{passengerEmail}}",
+  "password": "{{password}}"
+}
+
+> {%
+  client.test("register passenger returns 204", function () {
+    client.assert(response.status === 204, "Expected 204 No Content");
+  });
+%}
+
+### Login as driver
+POST {{host}}/login?username={{driverUsername}}&password={{password}}
+Accept: text/plain
+
+> {%
+  client.test("driver login returns 200", function () {
+    client.assert(response.status === 200, "Expected 200 OK");
+  });
+  client.global.set("driverJwt", response.body);
+%}
+
+### Login as passenger
+POST {{host}}/login?username={{passengerUsername}}&password={{password}}
+Accept: text/plain
+
+> {%
+  client.test("passenger login returns 200", function () {
+    client.assert(response.status === 200, "Expected 200 OK");
+  });
+  client.global.set("passengerJwt", response.body);
+%}
+
+### Create a trip (as driver)
+# Note: This calls Geonorge to resolve start/destination addresses.
+POST {{host}}/api/trips
+Authorization: Bearer {{driverJwt}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "startAddress": "Bergen",
+  "destinationAddress": "Oslo",
+  "departureTimeInIsoFormat": "2026-12-31T12:00:00Z",
+  "seatsAvailable": 3
+}
+
+> {%
+  client.test("create trip returns 201", function () {
+    client.assert(response.status === 201, "Expected 201 Created");
+  });
+  client.assert(!!response.body && !!response.body.id, "Expected response body with id");
+  client.global.set("tripId", response.body.id);
+%}
+
+### Driver: list my trips
+GET {{host}}/api/trips/my-trips?timeFilter=UPCOMING
+Authorization: Bearer {{driverJwt}}
+Accept: application/json
+
+> {%
+  client.test("driver my-trips returns 200", function () {
+    client.assert(response.status === 200, "Expected 200 OK");
+  });
+  client.assert(Array.isArray(response.body), "Expected JSON array");
+%}
+
+### Passenger: list available trips (by origin)
+GET {{host}}/api/trips?startAddress=Bergen
+Authorization: Bearer {{passengerJwt}}
+Accept: application/json
+
+> {%
+  client.test("available trips returns 200", function () {
+    client.assert(response.status === 200, "Expected 200 OK");
+  });
+  client.assert(Array.isArray(response.body), "Expected JSON array");
+%}
+
+### Passenger: request participation
+POST {{host}}/api/trips/participations?tripId={{tripId}}
+Authorization: Bearer {{passengerJwt}}
+Accept: application/json
+
+> {%
+  client.test("participate returns 204", function () {
+    client.assert(response.status === 204, "Expected 204 No Content");
+  });
+%}
+
+### Passenger: see my participation status (should be PENDING initially)
+GET {{host}}/api/trips/my-participations?timeFilter=UPCOMING
+Authorization: Bearer {{passengerJwt}}
+Accept: application/json
+
+> {%
+  client.test("my-participations returns 200", function () {
+    client.assert(response.status === 200, "Expected 200 OK");
+  });
+  client.assert(Array.isArray(response.body), "Expected JSON array");
+
+  var match = null;
+  for (var i = 0; i < response.body.length; i++) {
+    var p = response.body[i];
+    if (p && p.trip && p.trip.id == client.global.get("tripId")) {
+      match = p;
+      break;
+    }
+  }
+  client.assert(!!match, "Expected to find participation for created trip");
+  client.global.set("tripParticipantId", match.id);
+%}
+
+### Driver: see all participants for a trip (should include passenger with PENDING)
+GET {{host}}/api/trips/{{tripId}}/participants
+Authorization: Bearer {{driverJwt}}
+Accept: application/json
+
+> {%
+  client.test("trip participants returns 200", function () {
+    client.assert(response.status === 200, "Expected 200 OK");
+  });
+  client.assert(Array.isArray(response.body), "Expected JSON array");
+%}
+
+### Driver: approve participation request
+POST {{host}}/api/trips/participants/{{tripParticipantId}}/status?status=APPROVED
+Authorization: Bearer {{driverJwt}}
+Accept: application/json
+
+> {%
+  client.test("approve returns 204", function () {
+    client.assert(response.status === 204, "Expected 204 No Content");
+  });
+%}
+
+### Passenger: verify status is now APPROVED
+GET {{host}}/api/trips/my-participations?timeFilter=UPCOMING
+Authorization: Bearer {{passengerJwt}}
+Accept: application/json
+
+> {%
+  var match = null;
+  for (var i = 0; i < response.body.length; i++) {
+    var p = response.body[i];
+    if (p && p.id == client.global.get("tripParticipantId")) {
+      match = p;
+      break;
+    }
+  }
+  client.assert(!!match, "Expected to find participation after approval");
+  client.test("participation status is APPROVED", function () {
+    client.assert(match.status === "APPROVED", "Expected APPROVED, got " + match.status);
+  });
+%}
+

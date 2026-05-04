@@ -10,8 +10,8 @@ Have a map, detailing the listed trips and meeting spots in the app.
 - [ ]
 
 ## BFTB Score
-Bang:
-Buck:
-TOTAL:
+Bang: 8
+Buck: 8
+TOTAL: 1.00
 
 ## misc

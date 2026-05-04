@@ -10,8 +10,8 @@ Give feedback to the driver on who has applied for their trip, and allow them to
 - [ ]
 
 ## BFTB Score
-Bang:
-Buck:
-TOTAL:
+Bang: 8
+Buck: 3
+TOTAL: 2.67
 
 ## misc

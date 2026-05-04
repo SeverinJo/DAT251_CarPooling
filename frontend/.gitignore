@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Generated from backend OpenAPI spec — re-run `npm run generate-api` to regenerate
+openapi.json
+src/api/generated/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -10,8 +10,8 @@ Enable creation of users.
 - [ ]
 
 ## BFTB Score
-Bang:
-Buck:
-TOTAL:
+Bang: 8
+Buck: 5
+TOTAL: 1.60
 
 ## misc

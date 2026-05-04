@@ -10,8 +10,8 @@ Have a working trips planner in the app.
 - [ ]
 
 ## BFTB Score
-Bang:
-Buck:
-TOTAL:
+Bang: 5
+Buck: 8
+TOTAL: 0.62
 
 ## misc

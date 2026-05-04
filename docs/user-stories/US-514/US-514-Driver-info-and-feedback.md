@@ -10,8 +10,8 @@ Display information about the driver on the trips listing, optionally also a rat
  - [ ]
 
 ## BFTB Score
-Bang:
-Buck:
-TOTAL:
+Bang: 5
+Buck: 3
+TOTAL: 1.67
 
 ## misc
