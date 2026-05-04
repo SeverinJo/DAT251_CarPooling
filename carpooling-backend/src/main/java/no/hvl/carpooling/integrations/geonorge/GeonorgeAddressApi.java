@@ -36,10 +36,11 @@ public class GeonorgeAddressApi {
             var uri = UriComponentsBuilder
                 .fromUriString(url)
                 .pathSegment("sok")
-                .queryParam("sok", "{searchQuery}")
+                .queryParam("sok", searchQuery)
                 .queryParam("treffPerSide", 10)
                 .queryParam("side", 0)
-                .buildAndExpand(searchQuery)
+                .build()
+                .encode()
                 .toUri();
 
             var response = restTemplate.getForEntity(uri, AddressSearchResponse.class);

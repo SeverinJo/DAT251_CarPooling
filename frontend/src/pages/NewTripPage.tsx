@@ -9,6 +9,9 @@ import TodayIcon from "@mui/icons-material/Today";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import AirlineSeatReclineNormalIcon from "@mui/icons-material/AirlineSeatReclineNormal";
+import { createTrip } from "../api/api";
+import AddressAutocomplete from "../components/AddressAutocomplete";
 
 const WEEKDAYS = [
     { label: "Mon", value: "monday" },
@@ -20,6 +23,23 @@ const WEEKDAYS = [
     { label: "Sun", value: "sunday" },
 ];
 
+const DAY_INDEX: Record<string, number> = {
+    sunday: 0, monday: 1, tuesday: 2, wednesday: 3,
+    thursday: 4, friday: 5, saturday: 6,
+};
+
+function nextOccurrenceISO(dayName: string, time: string): string {
+    const target = DAY_INDEX[dayName];
+    const now = new Date();
+    let daysUntil = target - now.getDay();
+    if (daysUntil <= 0) daysUntil += 7;
+    const date = new Date(now);
+    date.setDate(date.getDate() + daysUntil);
+    const [hours, minutes] = time.split(":");
+    date.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    return date.toISOString();
+}
+
 function NewTripPage() {
     const [tripType, setTripType] = useState<"recurring" | "single" | null>(null);
     const [from, setFrom] = useState("");
@@ -28,21 +48,59 @@ function NewTripPage() {
     const [date, setDate] = useState("");
     const [selectedDays, setSelectedDays] = useState<string[]>([]);
     const [duration, setDuration] = useState("");
+    const [seats, setSeats] = useState<number>(1);
     const [submitted, setSubmitted] = useState(false);
-    const [lastTrip, setLastTrip] = useState<object | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const isValid = () => {
-        if (!tripType || !from || !to || !time) return false;
+        if (!tripType || !from || !to || !time || seats < 1) return false;
         if (tripType === "recurring" && (selectedDays.length === 0 || !duration)) return false;
         return !(tripType === "single" && !date);
-
     };
 
-    const handleSubmit = () => {
-        if (isValid()) {
-            setLastTrip({tripType, from, to, time, date, selectedDays, duration});
+    const handleSubmit = async () => {
+        if (!isValid()) return;
+        setLoading(true);
+        setError(null);
+        try {
+            if (tripType === "single") {
+                await createTrip({
+                    startAddress: from,
+                    destinationAddress: to,
+                    departureTimeInIsoFormat: new Date(`${date}T${time}`).toISOString(),
+                    seatsAvailable: seats,
+                });
+            } else {
+                // Create one trip per selected day (next upcoming occurrence)
+                await Promise.all(
+                    selectedDays.map((day) =>
+                        createTrip({
+                            startAddress: from,
+                            destinationAddress: to,
+                            departureTimeInIsoFormat: nextOccurrenceISO(day, time),
+                            seatsAvailable: seats,
+                        })
+                    )
+                );
+            }
             setSubmitted(true);
+        } catch {
+            setError("Could not publish trip. Check that the addresses are valid Norwegian addresses.");
+        } finally {
+            setLoading(false);
         }
+    };
+
+    const handleUndo = () => {
+        setSubmitted(false);
+    };
+
+    const handleReset = () => {
+        setSubmitted(false);
+        setTripType(null);
+        setFrom(""); setTo(""); setTime(""); setDate("");
+        setSelectedDays([]); setDuration(""); setSeats(1);
     };
 
     if (submitted) {
@@ -52,27 +110,10 @@ function NewTripPage() {
                     Your trip is now published! Other users can now see your trip and request for a seat.
                 </Alert>
                 <Box sx={{ display: "flex", gap: 2, justifyContent: "center", mt: 3 }}>
-                    <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={() => {
-                            setSubmitted(false);
-                            setLastTrip(null);
-                            // TODO: When implemented with backend use API to remove the newly created trip
-                        }}
-                    >
+                    <Button variant="outlined" color="error" onClick={handleUndo}>
                         Undo
                     </Button>
-                    <Button
-                        variant="outlined"
-                        onClick={() => {
-                            setSubmitted(false);
-                            setLastTrip(null);
-                            setTripType(null);
-                            setFrom(""); setTo(""); setTime(""); setDate("");
-                            setSelectedDays([]); setDuration("");
-                        }}
-                    >
+                    <Button variant="outlined" onClick={handleReset}>
                         Create a new trip
                     </Button>
                 </Box>
@@ -86,10 +127,9 @@ function NewTripPage() {
                 Offer a new ride
             </Typography>
             <Typography variant="body2" color="text.secondary" mb={3}>
-                Choose whether you wan to offer a recurring or just a single ride
+                Choose whether you want to offer a recurring or just a single ride
             </Typography>
 
-            {/* Turtype-valg */}
             <Box sx={{ display: "flex", gap: 2, mb: 4 }}>
                 <Card
                     onClick={() => setTripType("recurring")}
@@ -128,7 +168,6 @@ function NewTripPage() {
                 </Card>
             </Box>
 
-            {/* Skjema — vises når type er valgt */}
             {tripType && (
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
                     <Divider />
@@ -137,19 +176,17 @@ function NewTripPage() {
                         <LocationOnIcon color="primary" />
                         <Typography fontWeight={600}>To - From</Typography>
                     </Box>
-                    <TextField
+                    <AddressAutocomplete
                         label="From"
                         value={from}
-                        onChange={(e) => setFrom(e.target.value)}
-                        fullWidth
-                        placeholder="E.g. Konstad, HVL"
+                        onChange={setFrom}
+                        placeholder="E.g. Inndalsveien 28, Bergen"
                     />
-                    <TextField
+                    <AddressAutocomplete
                         label="To"
                         value={to}
-                        onChange={(e) => setTo(e.target.value)}
-                        fullWidth
-                        placeholder="E.g Askøy"
+                        onChange={setTo}
+                        placeholder="E.g. Nygjerdet 1, Alta"
                     />
 
                     <Divider />
@@ -205,7 +242,7 @@ function NewTripPage() {
                     )}
 
                     <TextField
-                        label="Time of department"
+                        label="Time of departure"
                         type="time"
                         value={time}
                         onChange={(e) => setTime(e.target.value)}
@@ -213,6 +250,20 @@ function NewTripPage() {
                         slotProps={{ inputLabel: { shrink: true } }}
                     />
 
+                    <Divider />
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <AirlineSeatReclineNormalIcon color="primary" />
+                        <Typography fontWeight={600}>Seats available</Typography>
+                    </Box>
+                    <TextField
+                        label="Number of seats"
+                        type="number"
+                        value={seats}
+                        onChange={(e) => setSeats(Math.max(1, parseInt(e.target.value) || 1))}
+                        fullWidth
+                        slotProps={{ htmlInput: { min: 1, max: 8 } }}
+                    />
 
                     {tripType === "recurring" && (
                         <>
@@ -239,14 +290,17 @@ function NewTripPage() {
                             </Box>
                         </>
                     )}
+
+                    {error && <Alert severity="error">{error}</Alert>}
+
                     <Button
                         variant="contained"
                         size="large"
-                        disabled={!isValid()}
+                        disabled={!isValid() || loading}
                         onClick={handleSubmit}
                         sx={{ mt: 2, borderRadius: 2, textTransform: "none", fontWeight: 600 }}
                     >
-                        Publish ride
+                        {loading ? "Publishing..." : "Publish ride"}
                     </Button>
                 </Box>
             )}

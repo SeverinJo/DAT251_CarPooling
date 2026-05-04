@@ -1,4 +1,5 @@
-import { Button, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Button, Paper, Stack, Typography } from "@mui/material";
+import AddressAutocomplete from "../AddressAutocomplete";
 
 type Props = {
     from: string;
@@ -8,26 +9,26 @@ type Props = {
     onSearch: () => void;
 };
 
-function TripSearchForm({from, to, onFromChange, onToChange, onSearch}: Props) {
+function TripSearchForm({ from, to, onFromChange, onToChange, onSearch }: Props) {
     return (
-        <Paper sx={{p: 3}}>
+        <Paper sx={{ p: 3 }}>
             <Stack spacing={2}>
                 <Typography variant="h6" component="h2">
                     Search for rides
                 </Typography>
 
-                <TextField
+                <AddressAutocomplete
                     label="From"
                     value={from}
-                    onChange={(e) => onFromChange(e.target.value)}
-                    fullWidth
+                    onChange={onFromChange}
+                    placeholder="E.g. Inndalsveien 28, Bergen"
                 />
 
-                <TextField
+                <AddressAutocomplete
                     label="To"
                     value={to}
-                    onChange={(e) => onToChange(e.target.value)}
-                    fullWidth
+                    onChange={onToChange}
+                    placeholder="E.g. Nygjerdet 1, Alta"
                 />
 
                 <Button variant="contained" onClick={onSearch}>

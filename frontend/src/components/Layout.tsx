@@ -30,6 +30,7 @@ import Diversity3Icon from "@mui/icons-material/Diversity3";
 import ExploreIcon from "@mui/icons-material/Explore";
 import SearchIcon from "@mui/icons-material/Search";
 import AirlineSeatReclineNormalIcon from "@mui/icons-material/AirlineSeatReclineNormal";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 
@@ -42,6 +43,7 @@ const feedSubItems = [
 const newTripSubItems = [
     { label: "Find a Trip", icon: <SearchIcon />, path: "/trip/search" },
     { label: "Offer a Seat", icon: <AirlineSeatReclineNormalIcon />, path: "/trip/offer" },
+    { label: "My Trips", icon: <DirectionsCarIcon />, path: "/my-trips" },
 ];
 
 interface LayoutProps {

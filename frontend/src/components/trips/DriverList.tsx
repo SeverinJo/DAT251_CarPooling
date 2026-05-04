@@ -1,12 +1,12 @@
 import { Paper, Stack, Typography } from "@mui/material";
 import DriverCard from "./DriverCard";
-import type { User } from "../../types";
+import type { TripResponse } from "../../api/generated/models/TripResponse";
 
 type Props = {
-    drivers: User[];
+    trips: TripResponse[];
 };
 
-function DriverList({ drivers }: Props) {
+function DriverList({ trips }: Props) {
     return (
         <Paper sx={{ p: 3 }}>
             <Stack spacing={2}>
@@ -14,13 +14,13 @@ function DriverList({ drivers }: Props) {
                     Potential drivers
                 </Typography>
 
-                {drivers.length === 0 ? (
+                {trips.length === 0 ? (
                     <Typography variant="body2" color="text.secondary">
                         Currently no ride offerings for this route
                     </Typography>
                 ) : (
-                    drivers.map((driver) => (
-                        <DriverCard key={driver.id} driver={driver} />
+                    trips.map((trip) => (
+                        <DriverCard key={trip.id} trip={trip} />
                     ))
                 )}
             </Stack>
