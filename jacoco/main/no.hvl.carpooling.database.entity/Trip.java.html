@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Trip.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">carpooling-backend</a> &gt; <a href="index.source.html" class="el_package">no.hvl.carpooling.database.entity</a> &gt; <span class="el_source">Trip.java</span></div><h1>Trip.java</h1><pre class="source lang-java linenums">package no.hvl.carpooling.database.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = &quot;trips&quot;)
+public class Trip {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = &quot;driver_id&quot;, nullable = false)
+    private User driver;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = &quot;origin&quot;, nullable = false)
+    private Address origin;
+
+    @Column(name = &quot;origin_municipality&quot;, nullable = false)
+    private String originMunicipality;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = &quot;destination&quot;, nullable = false)
+    private Address destination;
+
+    @Column(name = &quot;departure_time&quot;, nullable = false)
+    private LocalDateTime departureTime;
+
+    @Column(name = &quot;seats_available&quot;, nullable = false)
+    private Integer seatsAvailable;
+
+    // Handled by DB default in Flyway migration.
+    @Column(name = &quot;created_at&quot;, insertable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+<span class="fc" id="L48">    public Trip() {</span>
+<span class="fc" id="L49">    }</span>
+
+    public Integer getId() {
+<span class="nc" id="L52">        return id;</span>
+    }
+
+    public User getDriver() {
+<span class="nc" id="L56">        return driver;</span>
+    }
+
+    public void setDriver(User driver) {
+<span class="nc" id="L60">        this.driver = driver;</span>
+<span class="nc" id="L61">    }</span>
+
+    public Address getOrigin() {
+<span class="nc" id="L64">        return origin;</span>
+    }
+
+    public void setOrigin(Address origin) {
+<span class="nc" id="L68">        this.origin = origin;</span>
+<span class="nc" id="L69">    }</span>
+
+    public String getOriginMunicipality() {
+<span class="nc" id="L72">        return originMunicipality;</span>
+    }
+
+    public void setOriginMunicipality(String originMunicipality) {
+<span class="nc" id="L76">        this.originMunicipality = originMunicipality;</span>
+<span class="nc" id="L77">    }</span>
+
+    public Address getDestination() {
+<span class="nc" id="L80">        return destination;</span>
+    }
+
+    public void setDestination(Address destination) {
+<span class="nc" id="L84">        this.destination = destination;</span>
+<span class="nc" id="L85">    }</span>
+
+    public LocalDateTime getDepartureTime() {
+<span class="nc" id="L88">        return departureTime;</span>
+    }
+
+    public void setDepartureTime(LocalDateTime departureTime) {
+<span class="nc" id="L92">        this.departureTime = departureTime;</span>
+<span class="nc" id="L93">    }</span>
+
+    public int getSeatsAvailable() {
+<span class="nc" id="L96">        return seatsAvailable;</span>
+    }
+
+    public void setSeatsAvailable(int seatsAvailable) {
+<span class="nc" id="L100">        this.seatsAvailable = seatsAvailable;</span>
+<span class="nc" id="L101">    }</span>
+
+    public LocalDateTime getCreatedAt() {
+<span class="nc" id="L104">        return createdAt;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

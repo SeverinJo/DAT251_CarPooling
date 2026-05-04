@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TripParticipant.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">carpooling-backend</a> &gt; <a href="index.source.html" class="el_package">no.hvl.carpooling.database.entity</a> &gt; <span class="el_source">TripParticipant.java</span></div><h1>TripParticipant.java</h1><pre class="source lang-java linenums">package no.hvl.carpooling.database.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(
+    name = &quot;trip_participants&quot;,
+    uniqueConstraints = {
+        @UniqueConstraint(name = &quot;unique_trip_user&quot;, columnNames = {&quot;trip_id&quot;, &quot;user_id&quot;})
+    }
+)
+<span class="fc" id="L27">public class TripParticipant {</span>
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = &quot;trip_id&quot;, nullable = false)
+    private Trip trip;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = &quot;user_id&quot;, nullable = false)
+    private User user;
+
+<span class="fc" id="L41">    @Enumerated(EnumType.STRING)</span>
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = &quot;status&quot;, nullable = false, columnDefinition = &quot;participant_status&quot;)
+    private TripParticipantStatus status = TripParticipantStatus.PENDING;
+
+    // Handled by DB default in Flyway migration.
+    @Column(name = &quot;requested_at&quot;, insertable = false, updatable = false)
+    private LocalDateTime requestedAt;
+
+    @Column(name = &quot;updated_at&quot;)
+    private LocalDateTime updatedAt;
+
+    public Integer getId() {
+<span class="nc" id="L54">        return id;</span>
+    }
+
+    public Trip getTrip() {
+<span class="nc" id="L58">        return trip;</span>
+    }
+
+    public void setTrip(Trip trip) {
+<span class="nc" id="L62">        this.trip = trip;</span>
+<span class="nc" id="L63">    }</span>
+
+    public User getUser() {
+<span class="nc" id="L66">        return user;</span>
+    }
+
+    public void setUser(User user) {
+<span class="nc" id="L70">        this.user = user;</span>
+<span class="nc" id="L71">    }</span>
+
+    public TripParticipantStatus getStatus() {
+<span class="nc" id="L74">        return status;</span>
+    }
+
+    public void setStatus(TripParticipantStatus status) {
+<span class="nc" id="L78">        this.status = status;</span>
+<span class="nc" id="L79">    }</span>
+
+    public LocalDateTime getRequestedAt() {
+<span class="nc" id="L82">        return requestedAt;</span>
+    }
+
+    public LocalDateTime getUpdatedAt() {
+<span class="nc" id="L86">        return updatedAt;</span>
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+<span class="nc" id="L90">        this.updatedAt = updatedAt;</span>
+<span class="nc" id="L91">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>
